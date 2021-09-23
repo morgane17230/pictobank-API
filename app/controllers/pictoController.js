@@ -1,4 +1,5 @@
 const { Picto } = require("../models");
+const { Op } = require("sequelize");
 const aws = require("aws-sdk");
 
 aws.config.update({
@@ -19,7 +20,23 @@ const pictoController = {
     }
   },
 
-  getOnePicto: async (req, res, next) => {
+  searchPictos: async (req, res, next) => {
+    try {
+      const pictos = await Picto.findAll({
+        where: {
+          originalname: {
+            [Op.like]: "%" + req.params.query + "%",
+          },
+        },
+      });
+      pictos ? res.json(pictos) : next();
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
+    }
+  },
+
+  downloadPicto: async (req, res, next) => {
     const s3 = new aws.S3();
     try {
       const picto = await Picto.findByPk(req.params.pictoId);
