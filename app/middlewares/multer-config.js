@@ -10,10 +10,25 @@ aws.config.update({
 });
 const s3 = new aws.S3();
 
-const upload = multer({
+const uploadImages = multer({
   storage: multerS3({
     s3: s3,
-    bucket: process.env.AWSBucket,
+    bucket: process.env.AWSBucketIm,
+    acl: "public-read",
+    contentType: multerS3.AUTO_CONTENT_TYPE,
+    metadata: (req, file, cb) => {
+      cb(null, { fieldName: file.fieldname });
+    },
+    key: (req, file, cb) => {
+      cb(null, file.originalname);
+    },
+  }),
+}).single("path");
+
+const uploadAvatar = multer({
+  storage: multerS3({
+    s3: s3,
+    bucket: process.env.AWSBucketAv,
     acl: "public-read",
     contentType: multerS3.AUTO_CONTENT_TYPE,
     metadata: (req, file, cb) => {
@@ -26,5 +41,6 @@ const upload = multer({
 }).single("path");
 
 module.exports = {
-  upload
+  uploadImages,
+  uploadAvatar
 };

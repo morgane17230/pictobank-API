@@ -1,4 +1,4 @@
-const { DataTypes, Model, STRING } = require("sequelize");
+const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database");
 
 class Folder extends Model {}
@@ -6,7 +6,7 @@ class Folder extends Model {}
 Folder.init(
   {
     foldername: DataTypes.STRING,
-    path: STRING,
+    path: DataTypes.STRING,
     user_id: DataTypes.INTEGER,
   },
   {

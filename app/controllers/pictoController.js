@@ -14,9 +14,9 @@ const pictoController = {
     try {
       const pictos = await Picto.findAll();
       pictos ? res.json(pictos) : next();
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json(err.toString());
     }
   },
 
@@ -30,9 +30,9 @@ const pictoController = {
         },
       });
       pictos ? res.json(pictos) : next();
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json(err.toString());
     }
   },
 
@@ -47,14 +47,13 @@ const pictoController = {
         Expires: 60 * 5,
       });
       res.json(file);
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json(err.toString());
     }
   },
 
   createPicto: (req, res) => {
-    console.log(req.file);
     try {
       const newPictos = Picto.create({
         originalname: req.file.originalname,
@@ -63,9 +62,9 @@ const pictoController = {
         path: req.file.location,
       });
       res.status(200).json(newPictos);
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json(err.toString());
     }
   },
 
@@ -85,9 +84,9 @@ const pictoController = {
       );
       await deletedPicto.destroy();
       res.json(deletedPicto);
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json(err.toString());
     }
   },
 };
