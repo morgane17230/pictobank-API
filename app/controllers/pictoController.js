@@ -12,7 +12,9 @@ aws.config.update({
 const pictoController = {
   getAllPictos: async (_, res, next) => {
     try {
-      const pictos = await Picto.findAll();
+      const pictos = await Picto.findAll({
+        order: [["originalname", "ASC"]]
+      });
       pictos ? res.json(pictos) : next();
     } catch (err) {
       console.trace(err);
@@ -41,7 +43,7 @@ const pictoController = {
     try {
       const picto = await Picto.findByPk(req.params.pictoId);
       const file = await s3.getSignedUrl("getObject", {
-        Bucket: process.env.AWSBucket,
+        Bucket: process.env.AWSBucketIm,
         Key: picto.originalname,
         ResponseContentDisposition: `attachment; filename="${picto.originalname}"`,
         Expires: 60 * 5,
@@ -56,12 +58,13 @@ const pictoController = {
   createPicto: (req, res) => {
     try {
       const newPictos = Picto.create({
+        user_id: req.body.user_id,
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
         path: req.file.location,
       });
-      res.status(200).json(newPictos);
+      res.status(200).json({newPictos, validation: 'Picto(s) enregistré(s)'});
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());
@@ -70,14 +73,15 @@ const pictoController = {
 
   deletePicto: async (req, res) => {
     const s3 = new aws.S3();
+
     try {
       const deletedPicto = await Picto.findByPk(req.params.pictoId);
       s3.deleteObject(
         {
-          Bucket: process.env.AWSBucket,
+          Bucket: process.env.AWSBucketIm,
           Key: deletedPicto.originalname,
         },
-        function (err, data) {
+        function (err, _) {
           if (err) console.log(err, err.stack);
           else console.log();
         }

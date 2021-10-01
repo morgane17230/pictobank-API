@@ -62,10 +62,10 @@ const UserController = {
         },
       });
 
-      if (user) {
+      if (created) {
+        res.json({created, validation: 'Compte créé'});
+      } else if (user) {
         res.json("Cet utilisateur existe déjà");
-      } else {
-        res.json(created);
       }
     } catch (err) {
       console.trace(err);
@@ -150,11 +150,11 @@ const UserController = {
         return res.status(400).json("Missing body from request");
       }
 
-      const { email, password } = req.body;
+      const { username, password } = req.body;
 
       let missingParams = [];
-      if (!email) {
-        missingParams.push("email");
+      if (!username) {
+        missingParams.push("username");
       }
 
       if (!password) {
@@ -169,11 +169,9 @@ const UserController = {
 
       const user = await User.scope("pass").findOne({
         where: {
-          email: email,
+          username: username,
         },
-        include: [
-          'folders'
-        ]
+        include: ["folders"],
       });
 
       if (!user) {

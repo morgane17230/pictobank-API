@@ -13,6 +13,7 @@ CREATE TABLE "user" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
+    "role" TEXT NOT NULL DEFAULT 'user',
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(), 
     "updated_at" TIMESTAMPTZ
 );
@@ -33,6 +34,7 @@ CREATE TABLE "picto" (
     "mimetype" TEXT NOT NULL,
     "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
+    "user_id" INTEGER NOT NULL REFERENCES "user"("id"), 
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );

@@ -3,6 +3,16 @@ const Folder = require("./folder.js");
 const Picto = require("./picto");
 const FolderHasPicto = require("./folder_has_picto");
 
+User.hasMany(Picto, {
+  as: "pictos",
+  foreignKey: "user_id",
+});
+
+Picto.belongsTo(User, {
+  as: "user",
+  foreignKey: "user_id",
+});
+
 User.hasMany(Folder, {
   as: "folders",
   foreignKey: "user_id",
