@@ -1,29 +1,19 @@
-const { User, Folder } = require("../models");
+const { Folder } = require("../models");
 const aws = require("aws-sdk");
 
 
 
 const folderController = {
   createFolder: async (req, res) => {
+    console.log(req.body);
     try {
-      if (!req.body) {
-        return res.status(400).json("Missing body from request");
-      }
-
-      let missingParams = [];
-      if (!foldername) {
-        missingParams.push("foldername");
-      }
-
-      if (missingParams.length > 0) {
-        return res
-          .status(400)
-          .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
-      }
-
       const [folder, created] = await Folder.findOrCreate({
         where: { foldername: req.body.foldername },
         defaults: {
+          user_id: req.body.user_id,
+          originalname: req.file.originalname,
+          mimetype: req.file.mimetype,
+          size: req.file.size,
           path: req.file.location,
         },
       });

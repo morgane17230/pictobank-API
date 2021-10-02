@@ -15,8 +15,11 @@ router.post("/addPictos",multerMid.uploadImages,  pictoController.createPicto);
 router.delete("/deletePicto/:pictoId", pictoController.deletePicto);
 
 
-
-router.post("/addFolder", folderController.createFolder)
+router.post(
+  "/addFolder",
+  multerMid.uploadAvatar,
+  folderController.createFolder
+);
 
 router.get("/user", userController.getOnUser);
 router.post("/addUser", userController.createUser)

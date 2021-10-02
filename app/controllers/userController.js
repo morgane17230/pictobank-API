@@ -8,7 +8,9 @@ const UserController = {
     var decoded = jwt_decode(token);
     let user = null;
     try {
-      user = await User.findByPk(decoded.userId);
+      user = await User.findByPk(decoded.userId, {
+        include: ['folders']
+      });
       res.json(user);
     } catch (err) {
       console.trace(err);

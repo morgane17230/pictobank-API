@@ -21,6 +21,9 @@ CREATE TABLE "user" (
 CREATE TABLE "folder" (
     "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     "foldername" TEXT NOT NULL,
+    "originalname" TEXT NOT NULL,
+    "mimetype" TEXT NOT NULL,
+    "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
     "user_id" INTEGER NOT NULL REFERENCES "user"("id") ON
 DELETE CASCADE,
