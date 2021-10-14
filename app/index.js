@@ -5,7 +5,6 @@ const express = require("express");
 const sanitizeBody = require("./middlewares/sanitize");
 var cors = require("cors");
 
-
 const PORT = process.env.PORT || 5000;
 const app = express();
 

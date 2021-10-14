@@ -9,7 +9,12 @@ const UserController = {
     let user = null;
     try {
       user = await User.findByPk(decoded.userId, {
-        include: ['folders']
+        include: [
+          {
+            association: "folders",
+            include: ["pictos"],
+          },
+        ],
       });
       res.json(user);
     } catch (err) {
@@ -65,7 +70,7 @@ const UserController = {
       });
 
       if (created) {
-        res.json({created, validation: 'Compte créé'});
+        res.json({ created, validation: "Compte créé" });
       } else if (user) {
         res.json("Cet utilisateur existe déjà");
       }
@@ -173,7 +178,12 @@ const UserController = {
         where: {
           username: username,
         },
-        include: ["folders"],
+        include: [
+          {
+            association: "folders",
+            include: ["pictos"],
+          },
+        ],
       });
 
       if (!user) {
@@ -202,8 +212,8 @@ const UserController = {
   },
 
   logout: async (req, res) => {
-    console.log('logout')
-  }
+    console.log("logout");
+  },
 };
 
 module.exports = UserController;

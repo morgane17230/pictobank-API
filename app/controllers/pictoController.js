@@ -27,7 +27,7 @@ const pictoController = {
       const pictos = await Picto.findAll({
         where: {
           originalname: {
-            [Op.like]: "%" + req.params.query + "%",
+            [Op.like]: req.params.query + "%",
           },
         },
       });

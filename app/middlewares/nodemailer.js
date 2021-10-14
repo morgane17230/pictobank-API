@@ -1,4 +1,7 @@
 const nodemailer = require("nodemailer");
+const hbs = require("nodemailer-express-handlebars");
+
+const path = require("path");
 
 let transporter = nodemailer.createTransport({
   host: process.env.smtpHost,
@@ -9,11 +12,23 @@ let transporter = nodemailer.createTransport({
     user: process.env.smtpUser,
     pass: process.env.passUser,
     clientId: process.env.clientId,
-    clientSecret: process.env.clienSecret,
+    clientSecret: process.env.clientSecret,
     refreshToken: process.env.refreshToken,
     accessToken: process.env.accessToken,
   },
 });
+
+const handlebarOptions = {
+  viewEngine: {
+    extName: ".hbs",
+    partialsDir: path.resolve(__dirname, "../views"),
+    defaultLayout: false,
+  },
+  viewPath: path.resolve(__dirname, "../views"),
+  extName: ".hbs",
+};
+
+transporter.use("compile", hbs(handlebarOptions));
 
 const sendMail = async (req, res) => {
   if (!req.body) {
@@ -23,12 +38,18 @@ const sendMail = async (req, res) => {
   const { lastname, firstname, email, message, type } = req.body;
 
   let options = {};
-  if (type === "contact") {
+  if (type === "contact" && lastname && firstname && message) {
       options = {
         from: email,
         to: process.env.smtpUser,
-        subject: `Nouveau message de ${firstname} ${lastname} sur Pikto`,
-        html: `<p>${message}</p>`,
+        subject: `Nouveau message du formulaire de contact sur Pikto`,
+        template: "contact",
+        context: {
+          firstname: firstname,
+          lastname: lastname,
+          email: message,
+          message: message,
+        },
       };
   } else {
     console.log("Type is missing");
