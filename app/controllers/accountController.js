@@ -1,4 +1,5 @@
-const { User } = require("../models");
+const { Account } = require('../models');
+
 const { jsonwebtoken } = require("../middlewares/jwt");
 const jwt_decode = require("jwt-decode");
 
@@ -28,8 +29,8 @@ const UserController = {
     try {
       user = await User.findOne({
         where: {
-          email: req.body.email
-        }
+          email: req.body.email,
+        },
       });
       const jwtContent = { userMail: req.params.email };
       const jwtOptions = {
@@ -120,25 +121,25 @@ const UserController = {
       if (!user) {
         return res.status(404).json("User not found");
       }
-      
+
       if (lastname) {
-        user.lastname = lastname
+        user.lastname = lastname;
       }
 
       if (firstname) {
-        user.firstname = firstname
+        user.firstname = firstname;
       }
 
       if (username) {
-        user.username = username
+        user.username = username;
       }
 
       if (email) {
-        user.email = email
+        user.email = email;
       }
 
       if (password) {
-        user.password = password
+        user.password = password;
       }
 
       await user.save();

@@ -1,13 +1,17 @@
 BEGIN;
 
+SELECT gen_random_uuid();
+
 DROP TABLE IF EXISTS
 "user",
 "folder",
 "picto",
 "folder_has_picto";
 
+
+
 CREATE TABLE "user" (
-    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "lastname" TEXT NOT NULL,
     "firstname" TEXT NOT NULL,
     "email" TEXT NOT NULL,
@@ -19,33 +23,33 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "folder" (
-    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "foldername" TEXT NOT NULL,
     "originalname" TEXT NOT NULL,
     "mimetype" TEXT NOT NULL,
     "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
-    "user_id" INTEGER NOT NULL REFERENCES "user"("id") ON
+    "user_id" UUID NOT NULL REFERENCES "user"("id") ON
 DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "picto" (
-    "id" INTEGER GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "originalname" TEXT NOT NULL,
     "mimetype" TEXT NOT NULL,
     "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
-    "user_id" INTEGER NOT NULL REFERENCES "user"("id"), 
+    "user_id" UUID NOT NULL REFERENCES "user"("id"), 
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "folder_has_picto" (
-    "folder_id" INTEGER NOT NULL REFERENCES "folder"("id") ON
+    "folder_id" UUID NOT NULL REFERENCES "folder"("id") ON
 DELETE CASCADE,
-    "picto_id" INTEGER NOT NULL REFERENCES "picto"("id") ON
+    "picto_id" UUID NOT NULL REFERENCES "picto"("id") ON
 DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ

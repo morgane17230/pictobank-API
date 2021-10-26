@@ -1,6 +1,6 @@
 const nodemailer = require("nodemailer");
 const hbs = require("nodemailer-express-handlebars");
-
+const { User } = require("../models");
 const path = require("path");
 
 let transporter = nodemailer.createTransport({
@@ -35,23 +35,89 @@ const sendMail = async (req, res) => {
     return res.status(400).json("Missing body from request");
   }
 
-  const { lastname, firstname, email, message, type } = req.body;
-
+  const { id, lastname, firstname, email, message, type } = req.body;
+  
   let options = {};
   if (type === "contact" && lastname && firstname && message) {
-      options = {
-        from: email,
-        to: process.env.smtpUser,
-        subject: `Nouveau message du formulaire de contact sur Pikto`,
-        template: "contact",
-        context: {
-          firstname: firstname,
-          lastname: lastname,
-          email: message,
-          message: message,
+    options = {
+      from: email,
+      to: process.env.smtpUser,
+      subject: "Nouveau message du formulaire de contact sur Pikto",
+      template: "contact",
+      context: {
+        firstname: firstname,
+        lastname: lastname,
+        email: message,
+        message: message,
+      },
+    };
+  } else if (type === "confirmRegister" && lastname && firstname && email) {
+    options = {
+      from: process.env.smtpUser,
+      to: email,
+      subject: `Votre compte a bien été créé`,
+      template: "confirmRegister",
+    };
+  } else if ((type === "updateProfile", lastname && firstname && email)) {
+    options = {
+      from: process.env.smtpUser,
+      to: email,
+      subject: "Vous souhaitez mettre à jour votre profil",
+      template: "updateProfile",
+      context: {
+        lastname: lastname,
+        firstname: firstname,
+        id: id,
+      },
+    };
+  } else if (type === "resetPassword" && email) {
+    let user = null;
+    try {
+      user = await User.findOne({
+        where: {
+          email: email,
         },
-      };
+      });
+    } catch (err) {
+      console.trace(err);
+      res.status(500).json(err.toString());
+    }
+    console.log(user);
+    options = {
+      from: process.env.smtpUser,
+      to: email,
+      subject: `Vous avez oublié votre mot de passe`,
+      template: "resetPassword",
+      context: {
+        userId: user.id,
+      },
+    };
+  } else if (
+    type === "confirmResetPassword" &&
+    lastname &&
+    firstname &&
+    email
+  ) {
+    options = {
+      from: process.env.smtpUser,
+      to: email,
+      subject: "Votre mot de passe a été mis à jour",
+      template: "confirmResetPassword",
+      context: {
+        firstname: firstname,
+        lastname: lastname,
+        email: email,
+      },
+    };
+  } else if (type === "confirmDelete" && email) {
+    options = {
+      from: process.env.smtpUser,
+      to: email,
+      subject: "Votre compte a bien été supprimé",
+      template: "confirmDelete",
+    };
   } else {
+    console.log(req.body);
     console.log("Type is missing");
     return;
   }

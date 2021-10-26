@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Contact CarelyTeam</title>
+    <title>Modification du profil</title>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
 
@@ -26,8 +26,8 @@
 </head>
 
 <body>
-    <h2>Message de {{ firstname }} {{ lastname }} </h2>
-    <p> {{ message }} </p>
+    <h2>{{ firstname }} {{ lastname }}</h2>
+    <p> Pour modifier vos informations, veuillez cliquer sur ce lien <a href="http://localhost:3000/updateUser/{{ id }}"><button>Modifier mon profil</button></a> </p>
 </body>
 
 </html>
