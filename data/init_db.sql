@@ -1,14 +1,14 @@
 BEGIN;
 
-SELECT gen_random_uuid();
+SELECT
+    gen_random_uuid();
 
-DROP TABLE IF EXISTS
+DROP TABLE IF EXISTS 
 "user",
 "folder",
 "picto",
+"category",
 "folder_has_picto";
-
-
 
 CREATE TABLE "user" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -17,8 +17,7 @@ CREATE TABLE "user" (
     "email" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
-    "role" TEXT NOT NULL DEFAULT 'user',
-    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(), 
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );
 
@@ -35,13 +34,21 @@ DELETE CASCADE,
     "updated_at" TIMESTAMPTZ
 );
 
+CREATE TABLE "category" (
+    "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    "name" TEXT NOT NULL,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ
+);
+
 CREATE TABLE "picto" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "originalname" TEXT NOT NULL,
     "mimetype" TEXT NOT NULL,
     "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
-    "user_id" UUID NOT NULL REFERENCES "user"("id"), 
+    "category_id" UUID NOT NULL REFERENCES "category"("id"),
+    "user_id" UUID NOT NULL REFERENCES "user"("id"),
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );

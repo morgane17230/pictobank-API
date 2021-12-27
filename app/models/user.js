@@ -11,7 +11,6 @@ User.init(
     email: DataTypes.STRING,
     username: DataTypes.STRING,
     password: DataTypes.STRING,
-    role: DataTypes.STRING,
   },
   {
     defaultScope: {

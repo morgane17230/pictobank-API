@@ -2,6 +2,7 @@ const User = require("./user.js");
 const Folder = require("./folder.js");
 const Picto = require("./picto");
 const FolderHasPicto = require("./folder_has_picto");
+const Category = require("./category");
 
 User.hasMany(Picto, {
   as: "pictos",
@@ -11,6 +12,16 @@ User.hasMany(Picto, {
 Picto.belongsTo(User, {
   as: "user",
   foreignKey: "user_id",
+});
+
+Category.hasMany(Picto, {
+  as: "pictos",
+  foreignKey: "category_id",
+});
+
+Picto.belongsTo(Category, {
+  as: "category",
+  foreignKey: "category_id",
 });
 
 User.hasMany(Folder, {
@@ -41,4 +52,5 @@ module.exports = {
   User,
   Picto,
   Folder,
+  Category,
 };

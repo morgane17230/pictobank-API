@@ -59,6 +59,7 @@ const pictoController = {
     try {
       const newPictos = Picto.create({
         user_id: req.body.user_id,
+        category_id: req.body.category_id,
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,

@@ -151,9 +151,7 @@ const UserController = {
 
   deleteUser: async (req, res) => {
     try {
-      const userId = parseInt(req.params.userId, 10);
-
-      const user = await User.findByPk(userId);
+      const user = await User.findByPk(req.params.userId);
 
       if (!user) {
         return res.status(404).json("User does not exist");

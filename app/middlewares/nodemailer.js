@@ -58,18 +58,6 @@ const sendMail = async (req, res) => {
       subject: `Votre compte a bien été créé`,
       template: "confirmRegister",
     };
-  } else if ((type === "updateProfile", lastname && firstname && email)) {
-    options = {
-      from: process.env.smtpUser,
-      to: email,
-      subject: "Vous souhaitez mettre à jour votre profil",
-      template: "updateProfile",
-      context: {
-        lastname: lastname,
-        firstname: firstname,
-        id: id,
-      },
-    };
   } else if (type === "resetPassword" && email) {
     let user = null;
     try {
