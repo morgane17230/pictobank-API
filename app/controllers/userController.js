@@ -28,8 +28,8 @@ const UserController = {
     try {
       user = await User.findOne({
         where: {
-          email: req.body.email
-        }
+          email: req.body.email,
+        },
       });
       const jwtContent = { userMail: req.params.email };
       const jwtOptions = {
@@ -94,9 +94,9 @@ const UserController = {
       });
 
       if (created) {
-        res.json({ created, validation: "Compte créé" });
+        res.json({ created, validation: "Votre compte a été créé" });
       } else if (user) {
-        res.json("Cet utilisateur existe déjà");
+        res.json({ error: "Un utilisateur avec ce nom existe déjà" });
       }
     } catch (err) {
       console.trace(err);
@@ -120,29 +120,32 @@ const UserController = {
       if (!user) {
         return res.status(404).json("User not found");
       }
-      
+
       if (lastname) {
-        user.lastname = lastname
+        user.lastname = lastname;
       }
 
       if (firstname) {
-        user.firstname = firstname
+        user.firstname = firstname;
       }
 
       if (username) {
-        user.username = username
+        user.username = username;
       }
 
       if (email) {
-        user.email = email
+        user.email = email;
       }
 
       if (password) {
-        user.password = password
+        user.password = password;
       }
 
       await user.save();
-      res.json(user.get({ plain: true }));
+      res.json({
+        user: user.get({ plain: true }),
+        validation: "Vos informations ont été mises à jour",
+      });
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());
@@ -158,7 +161,7 @@ const UserController = {
       }
 
       await user.destroy();
-      res.json("Successfully deleted user");
+      res.json({ validation: "Votre compte a été supprimé" });
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());
@@ -201,13 +204,13 @@ const UserController = {
       });
 
       if (!user) {
-        return res.status(404).json("Cet utilisateur n'existe pas");
+        res.status(404).json({error: "Un des identifiants est invalide"}).toString();
       }
-     
+
       const passwordMatches = await user.validPassword(password);
 
       if (!passwordMatches) {
-        return res.status(404).json("Mot de passe invalide");
+        res.status(404).json({error: "Un des identifiants est invalide"});
       }
       const jwtContent = { userId: user.id };
       const jwtOptions = {
@@ -223,10 +226,6 @@ const UserController = {
       console.trace(err);
       res.status(500).json(err.toString());
     }
-  },
-
-  logout: async (req, res) => {
-    console.log("logout");
   },
 };
 

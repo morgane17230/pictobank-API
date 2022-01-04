@@ -45,7 +45,6 @@ router.get("/user", userController.getOnUser);
 router.get("/user/:email", userController.getUserByMail);
 router.post("/addUser", userController.createUser);
 router.post("/login", userController.login);
-router.post("/logout", userController.logout);
 router.put("/user/:userId", userController.updateUser);
 router.delete("/user/:userId", userController.deleteUser);
 

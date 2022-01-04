@@ -112,9 +112,9 @@ const sendMail = async (req, res) => {
 
   transporter.sendMail(options, (error, _) => {
     if (error) {
-      return res.status(409).json(error.message);
+      return res.status(409).json("Un problème est survenu, le message n'a pas été envoyé").toString();
     } else {
-      return res.json("Email envoyé");
+      return res.json({Validation: "Le message a bien été envoyé"});
     }
   });
 };

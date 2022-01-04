@@ -47,13 +47,40 @@ const folderController = {
         }
       );
 
+      const { foldername, user_id } = req.body;
+      const { originalname, mimetype, size, location } = req.file
+
+      if (foldername) {
+          foldername
+      }
+      
+      if (user_id) {
+        user_id
+      }
+
+      if (originalname) {
+        originalname
+      }
+
+      if (mimetype) {
+        mimetype
+      }
+
+      if (size) {
+        size
+      }
+
+      if (location) {
+        location
+      }
+
       updatedFolder.set({
-        foldername: req.body.foldername,
-        user_id: req.body.user_id,
-        originalname: req.file.originalname,
-        mimetype: req.file.mimetype,
-        size: req.file.size,
-        path: req.file.location,
+        foldername,
+        user_id,
+        originalname,
+        mimetype,
+        size,
+        path: location
       });
 
       await updatedFolder.save();
@@ -97,7 +124,7 @@ const folderController = {
 
       await folder.addPicto(picto);
 
-      res.json(folder);
+      res.json({folder, validation: `Le picto a bien été ajouté au favoris ${folder.foldername}`});
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());

@@ -12,9 +12,11 @@ const categoryController = {
       res.status(500).json(err.toString());
     }
   },
-  getAllCategories: async (req, res) => {
+
+  getAllCategories: async (_, res) => {
     try {
       const categories = await Category.findAll({
+        order: [["name", "ASC"]],
         include: ["pictos"],
       });
       res.json(categories);
@@ -23,13 +25,24 @@ const categoryController = {
       res.status(500).json(err.toString());
     }
   },
+  
   createCategory: async (req, res) => {
     try {
-      const newCategory = await Category.create({
-        name: req.body.name,
+      const [category, created] = await Category.findOrCreate({
+        where: { name: req.body.name },
       });
 
-      res.json(newCategory);
+      if (created) {
+        res.status(200).json({
+          created,
+          validation: `La nouvelle catégorie a bien été créée`,
+        });
+      } else if (category) {
+        res
+          .status(500)
+          .json({ error: "Un catégorie portant ce nom existe déjà" })
+          .toString();
+      }
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());
@@ -39,7 +52,7 @@ const categoryController = {
   updateCategory: async (req, res) => {
     try {
       const updatedCategory = await Category.findByPk(req.params.categoryId);
-      
+
       updatedCategory.set({
         name: req.body.name,
       });
@@ -54,11 +67,8 @@ const categoryController = {
   },
 
   deleteCategory: async (req, res) => {
-  
     try {
-      const deletedCategory = await Category.findByPk(
-        req.params.categoryId
-      );
+      const deletedCategory = await Category.findByPk(req.params.categoryId);
       await deletedCategory.destroy();
       res.json(deletedCategory);
     } catch (err) {

@@ -48,7 +48,7 @@ const pictoController = {
         size: req.file.size,
         path: req.file.location,
       });
-      res.status(200).json({ newPictos, validation: "Picto(s) enregistré(s)" });
+      res.status(200).json({ newPictos, validation: "Picto(s) ajouté(s)" });
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());
