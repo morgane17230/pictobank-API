@@ -111,7 +111,7 @@ const UserController = {
       }
       const { lastname, firstname, email, username, password } = req.body;
 
-      const userId = parseInt(req.params.userId, 10);
+      const userId = req.params.userId;
 
       const user = await User.findByPk(userId, {
         include: ["folders"],
@@ -203,7 +203,7 @@ const UserController = {
       if (!user) {
         return res.status(404).json("Cet utilisateur n'existe pas");
       }
-
+     
       const passwordMatches = await user.validPassword(password);
 
       if (!passwordMatches) {

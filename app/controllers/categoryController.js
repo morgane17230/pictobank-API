@@ -38,7 +38,7 @@ const categoryController = {
 
   updateCategory: async (req, res) => {
     try {
-      const updatedCategory = await Category.findByPk(Number(req.params.categoryId));
+      const updatedCategory = await Category.findByPk(req.params.categoryId);
       
       updatedCategory.set({
         name: req.body.name,
@@ -57,7 +57,7 @@ const categoryController = {
   
     try {
       const deletedCategory = await Category.findByPk(
-        Number(req.params.categoryId)
+        req.params.categoryId
       );
       await deletedCategory.destroy();
       res.json(deletedCategory);

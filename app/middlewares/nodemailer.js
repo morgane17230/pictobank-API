@@ -35,7 +35,7 @@ const sendMail = async (req, res) => {
     return res.status(400).json("Missing body from request");
   }
 
-  const { id, lastname, firstname, email, message, type } = req.body;
+  const { lastname, firstname, email, message, type } = req.body;
   
   let options = {};
   if (type === "contact" && lastname && firstname && message) {
@@ -70,7 +70,7 @@ const sendMail = async (req, res) => {
       console.trace(err);
       res.status(500).json(err.toString());
     }
-    console.log(user);
+    
     options = {
       from: process.env.smtpUser,
       to: email,

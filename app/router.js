@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const sendMail = require("./middlewares/nodemailer");
+const generatePDF = require("./middlewares/pdfGenerator");
 const multerMid = require("./middlewares/multer-config.js");
 const pictoController = require("./controllers/pictoController.js");
 const userController = require("./controllers/userController");
@@ -11,7 +12,7 @@ const categoryController = require("./controllers/categoryController");
 
 router.get("/picto", pictoController.getAllPictos);
 router.get("/picto/search/:query", pictoController.searchPictos);
-router.get("/picto/:pictoId/download", pictoController.downloadPicto);
+router.get("/picto/pdf", generatePDF);
 router.post("/picto", multerMid.uploadImages, pictoController.createPicto);
 router.delete("/picto/:pictoId", pictoController.deletePicto);
 

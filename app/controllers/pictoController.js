@@ -13,7 +13,7 @@ const pictoController = {
   getAllPictos: async (_, res, next) => {
     try {
       const pictos = await Picto.findAll({
-        order: [["originalname", "ASC"]]
+        order: [["originalname", "ASC"]],
       });
       pictos ? res.json(pictos) : next();
     } catch (err) {
@@ -38,23 +38,6 @@ const pictoController = {
     }
   },
 
-  downloadPicto: async (req, res, next) => {
-    const s3 = new aws.S3();
-    try {
-      const picto = await Picto.findByPk(req.params.pictoId);
-      const file = await s3.getSignedUrl("getObject", {
-        Bucket: process.env.AWSBucketIm,
-        Key: picto.originalname,
-        ResponseContentDisposition: `attachment; filename="${picto.originalname}"`,
-        Expires: 60 * 5,
-      });
-      res.json(file);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
-    }
-  },
-
   createPicto: (req, res) => {
     try {
       const newPictos = Picto.create({
@@ -65,7 +48,7 @@ const pictoController = {
         size: req.file.size,
         path: req.file.location,
       });
-      res.status(200).json({newPictos, validation: 'Picto(s) enregistré(s)'});
+      res.status(200).json({ newPictos, validation: "Picto(s) enregistré(s)" });
     } catch (err) {
       console.trace(err);
       res.status(500).json(err.toString());

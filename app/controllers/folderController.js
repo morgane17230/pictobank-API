@@ -4,7 +4,7 @@ const aws = require("aws-sdk");
 const folderController = {
   getFolder: async (req, res) => {
     try {
-      const folder = await Folder.findByPk(Number(req.params.folderId), {
+      const folder = await Folder.findByPk((req.params.folderId), {
         include: ['pictos']
       });
      res.json(folder);
@@ -34,7 +34,7 @@ const folderController = {
   updateFolder: async (req, res) => {
     const s3 = new aws.S3();
     try {
-      const updatedFolder = await Folder.findByPk(Number(req.params.folderId));
+      const updatedFolder = await Folder.findByPk(req.params.folderId);
       console.log(updatedFolder);
       s3.deleteObject(
         {
@@ -68,7 +68,7 @@ const folderController = {
   deleteFolder: async (req, res) => {
     const s3 = new aws.S3();
     try {
-      const deletedFolder = await Folder.findByPk(Number(req.params.folderId));
+      const deletedFolder = await Folder.findByPk(req.params.folderId);
       s3.deleteObject(
         {
           Bucket: process.env.AWSBucketAv,
