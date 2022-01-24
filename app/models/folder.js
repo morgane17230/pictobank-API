@@ -10,7 +10,7 @@ Folder.init(
     mimetype: DataTypes.STRING,
     size: DataTypes.INTEGER,
     path: DataTypes.STRING,
-    user_id: DataTypes.INTEGER,
+    org_id: DataTypes.INTEGER,
   },
   {
     sequelize,

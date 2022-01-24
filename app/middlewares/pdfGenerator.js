@@ -3,7 +3,7 @@ const { Picto } = require("../models");
 var fs = require("fs");
 const path = require("path");
 
-let pictos = []
+let pictos = [];
 
 generatePDF = async (req, res) => {
   try {
@@ -16,7 +16,7 @@ generatePDF = async (req, res) => {
         `size`,
         `path`,
         `category_id`,
-        `user_id`,
+        `org_id`,
       ],
       raw: true,
     });
@@ -58,9 +58,9 @@ generatePDF = async (req, res) => {
       .catch((error) => {
         console.error(error);
       });
-  } catch (err) {
-    console.trace(err);
-    res.status(500).json(err.toString());
+  } catch (error) {
+    console.trace(error);
+    res.status(500).json(error.toString());
   }
 };
 

@@ -1,9 +1,11 @@
-const { User } = require("../models");
+const { User, Organization } = require("../models");
+const passwordMiddleware = require("../middlewares/password");
+const sendMail = require("../middlewares/nodemailer");
 const { jsonwebtoken } = require("../middlewares/jwt");
 const jwt_decode = require("jwt-decode");
 
 const UserController = {
-  getOnUser: async (req, res) => {
+  getOneUser: async (req, res) => {
     var token = req.headers.authorization;
     var decoded = jwt_decode(token);
     let user = null;
@@ -11,15 +13,26 @@ const UserController = {
       user = await User.findByPk(decoded.userId, {
         include: [
           {
-            association: "folders",
-            include: ["pictos"],
+            association: "organization",
+            include: [
+              {
+                association: "folders",
+                include: ["pictos"],
+              },
+              {
+                association: "pictos",
+              },
+              {
+                association: "users",
+              },
+            ],
           },
         ],
       });
       res.json(user);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
   },
 
@@ -41,19 +54,22 @@ const UserController = {
         ...user.get({ plain: true }),
         token: jsonwebtoken.sign(jwtContent, process.env.jwtSecret, jwtOptions),
       });
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
   },
 
-  createUser: async (req, res) => {
+  createOrganizationAndUsers: async (req, res) => {
     try {
       if (!req.body) {
         return res.status(400).json("Missing body from request");
       }
 
-      const { lastname, firstname, email, username, password } = req.body;
+      const { lastname, firstname, email, name, password, isOrganization } =
+        req.body;
+
+        console.log(req.body)
 
       let missingParams = [];
       if (!lastname) {
@@ -68,8 +84,8 @@ const UserController = {
         missingParams.push("email");
       }
 
-      if (!username) {
-        missingParams.push("username");
+      if (!name) {
+        missingParams.push("name");
       }
 
       if (!password) {
@@ -82,25 +98,47 @@ const UserController = {
           .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
       }
 
-      const [user, created] = await User.findOrCreate({
+      const [organization, created] = await Organization.findOrCreate({
         where: { email: req.body.email },
         defaults: {
-          lastname,
-          firstname,
+          lastname: lastname.toUpperCase(),
+          firstname: firstname.toLowerCase(),
           email,
-          username,
-          password,
+          name: name.toUpperCase(),
         },
       });
 
       if (created) {
-        res.json({ created, validation: "Votre compte a été créé" });
-      } else if (user) {
-        res.json({ error: "Un utilisateur avec ce nom existe déjà" });
+        if (isOrganization) {
+          await User.create({
+            username: `${organization.name}-ADMIN`,
+            password,
+            org_id: organization.id,
+            role: "admin",
+          });
+
+          await User.create({
+            username: `${organization.name}-TEAM`,
+            password: passwordMiddleware(),
+            org_id: organization.id,
+            role: "user",
+          });
+        } else {
+          await User.create({
+            username: `${organization.name}`,
+            password,
+            org_id: organization.id,
+            role: "admin",
+          });
+        }
+        res.json({ created, validation: "Votre compte a bien été créé et un message de confirmation vous a été envoyé" });
+        sendMail({body: {type: 'confirmRegister', lastname: lastname, firstname: firstname, email: email}});
+      } else if (organization) {
+        res.json({ validation: "Un utilisateur avec ce nom existe déjà" });
       }
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 
@@ -109,62 +147,113 @@ const UserController = {
       if (!req.body) {
         return res.status(400).json("Missing body from request");
       }
-      const { lastname, firstname, email, username, password } = req.body;
+      const { lastname, firstname, email, name, password, teamPassword } =
+        req.body;
 
       const userId = req.params.userId;
 
       const user = await User.findByPk(userId, {
-        include: ["folders"],
+        where: {
+          role: "admin",
+        },
+        include: [
+          {
+            association: "organization",
+            include: [
+              {
+                association: "folders",
+                include: ["pictos"],
+              },
+            ],
+          },
+        ],
       });
 
       if (!user) {
         return res.status(404).json("User not found");
       }
 
+      const organization = await Organization.findOne({
+        where: {
+          id: user.org_id,
+        },
+      });
+
+      const team = await User.findOne({
+        where: {
+          org_id: organization.id,
+          role: "user",
+        },
+      });
+
+      if (!organization) {
+        return res.status(404).json("User not found");
+      }
+
       if (lastname) {
-        user.lastname = lastname;
+        organization.lastname = lastname.toUpperCase();
       }
 
       if (firstname) {
-        user.firstname = firstname;
+          organization.firstname = firstname.toLowerCase();
       }
 
-      if (username) {
-        user.username = username;
+      if (name) {
+        organization.name = name.toUpperCase();
+        team.username = `${organization.name}-TEAM`;
+        user.username = `${organization.name}-ADMIN`;
       }
 
       if (email) {
-        user.email = email;
+        organization.email = email;
       }
 
       if (password) {
         user.password = password;
+        await user.save({
+          password,
+        });
       }
 
-      await user.save();
+      if (teamPassword) {
+        team.password = teamPassword;
+        await team.save({
+          password: teamPassword,
+        });
+      }
+
+      await organization.save({
+        lastname,
+        firstname,
+        name,
+        email,
+      });
+
       res.json({
         user: user.get({ plain: true }),
         validation: "Vos informations ont été mises à jour",
       });
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 
   deleteUser: async (req, res) => {
     try {
-      const user = await User.findByPk(req.params.userId);
+      const organization = await Organization.findByPk(req.params.orgId);
 
-      if (!user) {
-        return res.status(404).json("User does not exist");
+        console.log(req.params.orgId);
+
+      if (!organization) {
+        return res.status(404).json("Organization does not exist");
       }
 
-      await user.destroy();
+      await organization.destroy();
       res.json({ validation: "Votre compte a été supprimé" });
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 
@@ -195,23 +284,18 @@ const UserController = {
         where: {
           username: username,
         },
-        include: [
-          {
-            association: "folders",
-            include: ["pictos"],
-          },
-        ],
       });
 
       if (!user) {
-        res.status(404).json({error: "Un des identifiants est invalide"}).toString();
+        res.status(404).json({ error: "Un des identifiants est invalide" });
       }
 
       const passwordMatches = await user.validPassword(password);
 
       if (!passwordMatches) {
-        res.status(404).json({error: "Un des identifiants est invalide"});
+        res.status(404).json({ error: "Un des identifiants est invalide" });
       }
+
       const jwtContent = { userId: user.id };
       const jwtOptions = {
         algorithm: "HS256",
@@ -222,9 +306,9 @@ const UserController = {
         ...user.get({ plain: true }),
         token: jsonwebtoken.sign(jwtContent, process.env.jwtSecret, jwtOptions),
       });
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 };

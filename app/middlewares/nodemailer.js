@@ -15,6 +15,7 @@ let transporter = nodemailer.createTransport({
     clientSecret: process.env.clientSecret,
     refreshToken: process.env.refreshToken,
     accessToken: process.env.accessToken,
+    expires      : 1494388182480
   },
 });
 
@@ -36,7 +37,7 @@ const sendMail = async (req, res) => {
   }
 
   const { lastname, firstname, email, message, type } = req.body;
-  
+
   let options = {};
   if (type === "contact" && lastname && firstname && message) {
     options = {
@@ -57,6 +58,10 @@ const sendMail = async (req, res) => {
       to: email,
       subject: `Votre compte a bien été créé`,
       template: "confirmRegister",
+      context: {
+        lastname,
+        firstname
+      }
     };
   } else if (type === "resetPassword" && email) {
     let user = null;
@@ -66,11 +71,11 @@ const sendMail = async (req, res) => {
           email: email,
         },
       });
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
-    
+
     options = {
       from: process.env.smtpUser,
       to: email,
@@ -105,16 +110,17 @@ const sendMail = async (req, res) => {
       template: "confirmDelete",
     };
   } else {
-    console.log(req.body);
     console.log("Type is missing");
     return;
   }
 
   transporter.sendMail(options, (error, _) => {
     if (error) {
-      return res.status(409).json("Un problème est survenu, le message n'a pas été envoyé").toString();
+      return res.status(409).json({
+        error: "Un problème est survenu, le message n'a pas été envoyé",
+      });
     } else {
-      return res.json({Validation: "Le message a bien été envoyé"});
+      return res.json({ validation: "Le message a bien été envoyé" });
     }
   });
 };

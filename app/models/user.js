@@ -6,11 +6,10 @@ class User extends Model {}
 
 User.init(
   {
-    lastname: DataTypes.STRING,
-    firstname: DataTypes.STRING,
-    email: DataTypes.STRING,
     username: DataTypes.STRING,
     password: DataTypes.STRING,
+    role: DataTypes.STRING,
+    org_id: DataTypes.INTEGER,
   },
   {
     defaultScope: {

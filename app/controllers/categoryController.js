@@ -7,9 +7,9 @@ const categoryController = {
         include: ["pictos"],
       });
       res.json(category);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
   },
 
@@ -20,16 +20,16 @@ const categoryController = {
         include: ["pictos"],
       });
       res.json(categories);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
   },
-  
+
   createCategory: async (req, res) => {
     try {
       const [category, created] = await Category.findOrCreate({
-        where: { name: req.body.name },
+        where: { name: req.body.name.toLowerCase() },
       });
 
       if (created) {
@@ -40,12 +40,11 @@ const categoryController = {
       } else if (category) {
         res
           .status(500)
-          .json({ error: "Un catégorie portant ce nom existe déjà" })
-          .toString();
+          .json({ error: "Une catégorie portant ce nom existe déjà" })
       }
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 
@@ -59,10 +58,10 @@ const categoryController = {
 
       await updatedCategory.save();
 
-      res.json(updatedCategory);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+      res.json({updatedCategory, validation: "La catégorie a bien été modifiée"});
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 
@@ -70,10 +69,10 @@ const categoryController = {
     try {
       const deletedCategory = await Category.findByPk(req.params.categoryId);
       await deletedCategory.destroy();
-      res.json(deletedCategory);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+      res.json({deletedCategory, validation: "La catégorie a bien été supprimée"});
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 };

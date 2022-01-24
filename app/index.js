@@ -13,15 +13,15 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(
   cors({
-    origin: "http://localhost:3000"
+    origin: "http://localhost:3000",
   })
 );
 
 app.use(sanitizeBody);
 app.use(router);
 app.use(function (err, req, res, next) {
-  console.log("Ceci est le champ invalide ->", err.field);
-  next(err);
+  console.log("Ceci est le champ invalide ->", error.field);
+  next(error);
 });
 app.listen(PORT, () => {
   console.log(`Listening on port ${PORT}`);

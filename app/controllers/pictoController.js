@@ -16,9 +16,9 @@ const pictoController = {
         order: [["originalname", "ASC"]],
       });
       pictos ? res.json(pictos) : next();
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
   },
 
@@ -32,16 +32,16 @@ const pictoController = {
         },
       });
       pictos ? res.json(pictos) : next();
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error.toString());
     }
   },
 
-  createPicto: (req, res) => {
+  createPicto: async (req, res) => {
     try {
-      const newPictos = Picto.create({
-        user_id: req.body.user_id,
+      const newPictos = await Picto.create({
+        org_id: req.body.org_id,
         category_id: req.body.category_id,
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
@@ -49,9 +49,9 @@ const pictoController = {
         path: req.file.location,
       });
       res.status(200).json({ newPictos, validation: "Picto(s) ajouté(s)" });
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 
@@ -71,10 +71,40 @@ const pictoController = {
         }
       );
       await deletedPicto.destroy();
-      res.json(deletedPicto);
-    } catch (err) {
-      console.trace(err);
-      res.status(500).json(err.toString());
+      res.json({deletedPicto, validation: "Le picto a bien été supprimé"});
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
+    }
+  },
+
+  deletePictos: async (req, res) => {
+    const s3 = new aws.S3();
+
+    try {
+      const deletedPictos = await Picto.findAll({
+        where: { org_id: req.params.orgId },
+      });
+      deletedPictos.forEach(async (deletedPicto) => {
+        s3.deleteObject(
+          {
+            Bucket: process.env.AWSBucketIm,
+            Key: deletedPicto.originalname,
+          },
+          function (err, _) {
+            if (err) console.log(err, err.stack);
+            else console.log();
+          }
+        );
+        await deletedPicto.destroy();
+      });
+        res.json({
+          deletedPictos,
+          validation: "Vos pictos ont bien été supprimés",
+        });
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, {error: "Une erreur s'est produite"});
     }
   },
 };
