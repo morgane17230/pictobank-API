@@ -1,4 +1,4 @@
-const { User, Organization } = require("../models");
+const { User, Account } = require("../models");
 const passwordMiddleware = require("../middlewares/password");
 const sendMail = require("../middlewares/nodemailer");
 const { jsonwebtoken } = require("../middlewares/jwt");
@@ -13,7 +13,7 @@ const UserController = {
       user = await User.findByPk(decoded.userId, {
         include: [
           {
-            association: "organization",
+            association: "account",
             include: [
               {
                 association: "folders",
@@ -60,7 +60,7 @@ const UserController = {
     }
   },
 
-  createOrganizationAndUsers: async (req, res) => {
+  createAccountAndUsers: async (req, res) => {
     try {
       if (!req.body) {
         return res.status(400).json("Missing body from request");
@@ -69,7 +69,7 @@ const UserController = {
       const { lastname, firstname, email, name, password, isOrganization } =
         req.body;
 
-        console.log(req.body)
+        console.log('ISORGANIZATION =>', isOrganization);
 
       let missingParams = [];
       if (!lastname) {
@@ -98,12 +98,13 @@ const UserController = {
           .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
       }
 
-      const [organization, created] = await Organization.findOrCreate({
+      const [account, created] = await Account.findOrCreate({
         where: { email: req.body.email },
         defaults: {
           lastname: lastname.toUpperCase(),
           firstname: firstname.toLowerCase(),
           email,
+          isOrganization,
           name: name.toUpperCase(),
         },
       });
@@ -111,34 +112,49 @@ const UserController = {
       if (created) {
         if (isOrganization) {
           await User.create({
-            username: `${organization.name}-ADMIN`,
+            username: `${account.name}-ADMIN`,
             password,
-            org_id: organization.id,
+            account_id: account.id,
             role: "admin",
           });
 
           await User.create({
-            username: `${organization.name}-TEAM`,
+            username: `${account.name}-TEAM`,
             password: passwordMiddleware(),
-            org_id: organization.id,
+            account_id: account.id,
             role: "user",
           });
         } else {
           await User.create({
-            username: `${organization.name}`,
+            username: `${account.name}`,
             password,
-            org_id: organization.id,
+            account_id: account.id,
             role: "admin",
           });
         }
-        res.json({ created, validation: "Votre compte a bien été créé et un message de confirmation vous a été envoyé" });
-        sendMail({body: {type: 'confirmRegister', lastname: lastname, firstname: firstname, email: email}});
-      } else if (organization) {
+
+        sendMail({
+          body: {
+            type: "confirmRegister",
+            lastname: lastname.toUpperCase(),
+            firstname: firstname.toLowerCase(),
+            email,
+            isOrganization,
+            name: name.toUpperCase(),
+          },
+        });
+
+        res.json({
+          created,
+          validation:
+            "Votre compte a bien été créé et un message de confirmation vous a été envoyé",
+        });
+      } else if (account) {
         res.json({ validation: "Un utilisateur avec ce nom existe déjà" });
       }
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -158,7 +174,7 @@ const UserController = {
         },
         include: [
           {
-            association: "organization",
+            association: "account",
             include: [
               {
                 association: "folders",
@@ -173,39 +189,39 @@ const UserController = {
         return res.status(404).json("User not found");
       }
 
-      const organization = await Organization.findOne({
+      const account = await Account.findOne({
         where: {
-          id: user.org_id,
+          id: user.account_id,
         },
       });
 
       const team = await User.findOne({
         where: {
-          org_id: organization.id,
+          account_id: account.id,
           role: "user",
         },
       });
 
-      if (!organization) {
+      if (!account) {
         return res.status(404).json("User not found");
       }
 
       if (lastname) {
-        organization.lastname = lastname.toUpperCase();
+        account.lastname = lastname.toUpperCase();
       }
 
       if (firstname) {
-          organization.firstname = firstname.toLowerCase();
+        account.firstname = firstname.toLowerCase();
       }
 
       if (name) {
-        organization.name = name.toUpperCase();
-        team.username = `${organization.name}-TEAM`;
-        user.username = `${organization.name}-ADMIN`;
+        account.name = name.toUpperCase();
+        team.username = `${account.name}-TEAM`;
+        user.username = `${account.name}-ADMIN`;
       }
 
       if (email) {
-        organization.email = email;
+        account.email = email;
       }
 
       if (password) {
@@ -222,7 +238,7 @@ const UserController = {
         });
       }
 
-      await organization.save({
+      await account.save({
         lastname,
         firstname,
         name,
@@ -235,25 +251,23 @@ const UserController = {
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
   deleteUser: async (req, res) => {
     try {
-      const organization = await Organization.findByPk(req.params.orgId);
+      const account = await Account.findByPk(req.params.accountId);
 
-        console.log(req.params.orgId);
-
-      if (!organization) {
-        return res.status(404).json("Organization does not exist");
+      if (!account) {
+        return res.status(404).json("Account does not exist");
       }
 
-      await organization.destroy();
-      res.json({ validation: "Votre compte a été supprimé" });
+      await account.destroy();
+      res.json({validation: "Votre compte a été supprimé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -308,7 +322,7 @@ const UserController = {
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 };

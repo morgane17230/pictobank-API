@@ -16,7 +16,7 @@ generatePDF = async (req, res) => {
         `size`,
         `path`,
         `category_id`,
-        `org_id`,
+        `account_id`,
       ],
       raw: true,
     });
@@ -52,8 +52,6 @@ generatePDF = async (req, res) => {
           "Content-Length": file.length,
         });
         res.send(file);
-        console.log(file);
-        console.log(pictos);
       })
       .catch((error) => {
         console.error(error);

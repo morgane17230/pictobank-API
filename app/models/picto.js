@@ -10,7 +10,7 @@ Picto.init(
     size: DataTypes.INTEGER,
     path: DataTypes.STRING,
     category_id: DataTypes.INTEGER,
-    org_id: DataTypes.INTEGER,
+    account_id: DataTypes.INTEGER,
   },
   {
     sequelize,

@@ -41,7 +41,7 @@ const pictoController = {
   createPicto: async (req, res) => {
     try {
       const newPictos = await Picto.create({
-        org_id: req.body.org_id,
+        account_id: req.body.account_id,
         category_id: req.body.category_id,
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
@@ -83,7 +83,7 @@ const pictoController = {
 
     try {
       const deletedPictos = await Picto.findAll({
-        where: { org_id: req.params.orgId },
+        where: { account_id: req.params.orgId },
       });
       deletedPictos.forEach(async (deletedPicto) => {
         s3.deleteObject(

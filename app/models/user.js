@@ -9,7 +9,7 @@ User.init(
     username: DataTypes.STRING,
     password: DataTypes.STRING,
     role: DataTypes.STRING,
-    org_id: DataTypes.INTEGER,
+    account_id: DataTypes.INTEGER,
   },
   {
     defaultScope: {

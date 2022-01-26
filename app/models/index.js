@@ -3,16 +3,16 @@ const Folder = require("./folder.js");
 const Picto = require("./picto");
 const FolderHasPicto = require("./folder_has_picto");
 const Category = require("./category");
-const Organization = require('./organization');
+const Account = require('./account');
 
-Organization.hasMany(Picto, {
+Account.hasMany(Picto, {
   as: "pictos",
-  foreignKey: "org_id",
+  foreignKey: "account_id",
 });
 
-Picto.belongsTo(Organization, {
-  as: "organization",
-  foreignKey: "org_id",
+Picto.belongsTo(Account, {
+  as: "account",
+  foreignKey: "account_id",
 });
 
 Category.hasMany(Picto, {
@@ -25,24 +25,24 @@ Picto.belongsTo(Category, {
   foreignKey: "category_id",
 });
 
-Organization.hasMany(Folder, {
+Account.hasMany(Folder, {
   as: "folders",
-  foreignKey: "org_id",
+  foreignKey: "account_id",
 });
 
-Folder.belongsTo(Organization, {
-  as: "organization",
-  foreignKey: "org_id",
+Folder.belongsTo(Account, {
+  as: "account",
+  foreignKey: "account_id",
 });
 
-Organization.hasMany(User, {
+Account.hasMany(User, {
   as: "users",
-  foreignKey: "org_id",
+  foreignKey: "account_id",
 });
 
-User.belongsTo(Organization, {
-  as: "organization",
-  foreignKey: "org_id",
+User.belongsTo(Account, {
+  as: "account",
+  foreignKey: "account_id",
 });
 
 Folder.belongsToMany(Picto, {
@@ -64,5 +64,5 @@ module.exports = {
   Picto,
   Folder,
   Category,
-  Organization
+  Account
 };

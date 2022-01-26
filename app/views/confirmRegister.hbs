@@ -1,33 +1,69 @@
-<!DOCTYPE html>
 <html lang="fr">
-
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Contact CarelyTeam</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap');
-
-        body {
-            width: 100%;
-            height: 100%;
-            background-color: aqua;
-        }
-
-        h1 {
-            font-family: 'Roboto', sans-serif;
-        }
-
-        p {
-            font-size: 1.5rem;
-        }
+      @import
+      url("https://fonts.googleapis.com/css2?family=Roboto:wght@100&display=swap");
+      body { width: 100%; height: 100%; font-family: "Roboto", sans-serif; background-color: white; }
+      .title { font-size: 1.2rem; font-weight: bold; } .button {
+      text-decoration: none; display: block; background-color: rgb(37, 37, 37);
+      color: white;}
     </style>
-</head>
+  </head>
 
-<body>
-    <h2>{{ firstname }} {{ lastname }}</h2>
-    <p>Votre compte a bien été créé</p>
-</body>
-
+  <body>
+    <div>
+      <span class="title">{{firstname}} {{lastname}}</span>
+      <p>Votre compte a bien été créé.</p>
+      {{#if isOrganization}}
+        <p>Vous avez accès à deux comptes distincts :</p>
+        <ul>
+          <li>
+            Un pour vous en tant qu'administrateur :
+            <ul>
+              <li>
+                Nom d'utilisateur:
+                {{name}}-ADMIN.
+              </li>
+              <li>
+                Mot de passe : celui que vous avez choisi à votre inscription.
+              </li>
+            </ul>
+          </li>
+          <li>
+            Un pour votre équipe :
+            <ul>
+              <li>
+                Nom d'utilisateur:
+                {{name}}-TEAM.
+              </li>
+              <li>
+                Mot de passe : celui que vous déterminerez dans la section
+                modification de profil.
+              </li>
+            </ul>
+          </li>
+        </ul>
+      {{else}}
+        <p>Vous pourrez vous connecter grâce aux identifiants suivants :</p>
+        <ul>
+          <li>
+            Nom d'utilisateur :
+            {{name}}
+          </li>
+          <li>
+            Mot de passe : celui que vous avez choisi
+          </li>
+        </ul>
+      {{/if}}
+      <a
+        class="button"
+        href="http://localhost:3000/user/login"
+        type="button"
+      >Pour vous connecter</a>
+    </div>
+  </body>
 </html>

@@ -1,19 +1,20 @@
 const { DataTypes, Model } = require("sequelize");
 const sequelize = require("../database");
 
-class Organization extends Model {}
+class Account extends Model {}
 
-Organization.init(
+Account.init(
   {
     lastname: DataTypes.STRING,
     firstname: DataTypes.STRING,
     email: DataTypes.INTEGER,
     name: DataTypes.STRING,
+    isOrganization: DataTypes.BOOLEAN,
   },
   {
     sequelize,
-    tableName: "organization",
+    tableName: "account",
   }
 );
 
-module.exports = Organization;
+module.exports = Account;

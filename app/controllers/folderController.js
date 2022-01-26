@@ -18,7 +18,7 @@ const folderController = {
     try {
       const folders = await Folder.findAll({
         where: {
-          org_id: req.params.orgId,
+          account_id: req.params.orgId,
         },
       });
       res.json(folders);
@@ -30,9 +30,24 @@ const folderController = {
 
   createFolder: async (req, res) => {
     try {
+      let missingParams = [];
+
+      if (!req.file) {
+        missingParams.push("file");
+      }
+
+      if (req.body === {}) {
+        missingParams.push("foldername");
+      }
+
+      if (missingParams.length > 0) {
+        return res
+          .status(400)
+          .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
+      }
       const newFolder = await Folder.create({
         foldername: req.body.foldername,
-        org_id: req.body.org_id,
+        account_id: req.body.account_id,
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
@@ -51,14 +66,14 @@ const folderController = {
     try {
       const updatedFolder = await Folder.findByPk(req.params.folderId);
 
-      const { foldername, org_id } = req.body;
+      const { foldername, account_id } = req.body;
 
       if (foldername) {
         foldername;
       }
 
-      if (org_id) {
-        org_id;
+      if (account_id) {
+        account_id;
       }
 
       if (req.file) {
@@ -75,7 +90,7 @@ const folderController = {
 
         updatedFolder.set({
           foldername,
-          org_id,
+          account_id,
           originalname: req.file.originalname,
           mimetype: req.file.mimetype,
           size: req.file.size,
@@ -85,7 +100,7 @@ const folderController = {
 
       updatedFolder.set({
         foldername,
-        org_id,
+        account_id,
       });
 
       await updatedFolder.save();
