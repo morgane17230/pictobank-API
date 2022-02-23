@@ -1,4 +1,4 @@
-const { User, Account } = require("../models");
+const { User, Account, Picto } = require("../models");
 const passwordMiddleware = require("../middlewares/password");
 const sendMail = require("../middlewares/nodemailer");
 const { jsonwebtoken } = require("../middlewares/jwt");
@@ -68,8 +68,6 @@ const UserController = {
 
       const { lastname, firstname, email, name, password, isOrganization } =
         req.body;
-
-        console.log('ISORGANIZATION =>', isOrganization);
 
       let missingParams = [];
       if (!lastname) {
@@ -215,9 +213,14 @@ const UserController = {
       }
 
       if (name) {
-        account.name = name.toUpperCase();
-        team.username = `${account.name}-TEAM`;
-        user.username = `${account.name}-ADMIN`;
+        if (account.isOrganization) {
+          account.name = name.toUpperCase();
+          team.username = `${account.name}-TEAM`;
+          user.username = `${account.name}-ADMIN`;
+        } else {
+          account.name = name.toUpperCase();
+          user.username = account.name;
+        }
       }
 
       if (email) {
@@ -246,7 +249,7 @@ const UserController = {
       });
 
       res.json({
-        user: user.get({ plain: true }),
+        user,
         validation: "Vos informations ont été mises à jour",
       });
     } catch (error) {
@@ -257,14 +260,33 @@ const UserController = {
 
   deleteUser: async (req, res) => {
     try {
-      const account = await Account.findByPk(req.params.accountId);
+      const pictos = await Picto.findAll({
+        where: {
+          account_id: req.params.accountId,
+        },
+      });
 
-      if (!account) {
-        return res.status(404).json("Account does not exist");
+      const owner = await User.findOne({
+        where: {
+          role: "isOwner",
+        },
+      });
+
+      pictos.forEach(async (picto) => {
+        picto.account_id = owner.account_id;
+        await picto.save();
+      });
+
+      const account = await Account.findByPk(req.params.accountId, {
+        include: "pictos",
+      });
+
+      if (account) {
+        await account.destroy();
+        res.json({ validation: "Votre compte a été supprimé" });
+      } else {
+        res.status(404).json("Account does not exist");
       }
-
-      await account.destroy();
-      res.json({validation: "Votre compte a été supprimé" });
     } catch (error) {
       console.trace(error);
       res.status(500).json(error, { error: "Une erreur s'est produite" });
@@ -290,7 +312,7 @@ const UserController = {
 
       if (missingParams.length > 0) {
         return res
-          .status(400)
+          .status(404)
           .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
       }
 
@@ -300,29 +322,32 @@ const UserController = {
         },
       });
 
-      if (!user) {
-        res.status(404).json({ error: "Un des identifiants est invalide" });
+      if (user) {
+        const passwordMatches = user.validPassword(password);
+
+        if (!passwordMatches) {
+          res.json({ validation: "Un des identifiants est invalide" });
+        }
+        const jwtContent = { userId: user.id };
+        const jwtOptions = {
+          algorithm: "HS256",
+          expiresIn: "2h",
+        };
+
+        res.json({
+          ...user.get({ plain: true }),
+          token: jsonwebtoken.sign(
+            jwtContent,
+            process.env.jwtSecret,
+            jwtOptions
+          ),
+        });
+      } else {
+        res.json({ validation: "Un des identifiants est invalide" });
       }
-
-      const passwordMatches = await user.validPassword(password);
-
-      if (!passwordMatches) {
-        res.status(404).json({ error: "Un des identifiants est invalide" });
-      }
-
-      const jwtContent = { userId: user.id };
-      const jwtOptions = {
-        algorithm: "HS256",
-        expiresIn: "2h",
-      };
-
-      res.json({
-        ...user.get({ plain: true }),
-        token: jsonwebtoken.sign(jwtContent, process.env.jwtSecret, jwtOptions),
-      });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      res.status(500).json({ error: "Une erreur s'est produite" });
     }
   },
 };

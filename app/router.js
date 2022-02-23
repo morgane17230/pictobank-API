@@ -48,7 +48,7 @@ router.get("/user/:email", userController.getUserByMail);
 router.post("/addUser", userController.createAccountAndUsers);
 router.post("/login", userController.login);
 router.put("/user/:userId", userController.updateUser);
-router.delete("/user/:accountId", userController.deleteUser);
+router.delete("/account/:accountId", userController.deleteUser);
 
 // category
 

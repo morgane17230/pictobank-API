@@ -57,23 +57,21 @@ const folderController = {
       res.json({ newFolder, validation: "Le dossier a bien été créé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
   updateFolder: async (req, res) => {
     const s3 = new aws.S3();
     try {
-      const updatedFolder = await Folder.findByPk(req.params.folderId);
+      const updatedFolder = await Folder.findByPk(req.params.folderId, {
+        include: ["pictos"],
+      });
 
-      const { foldername, account_id } = req.body;
+      const { foldername } = req.body;
 
       if (foldername) {
-        foldername;
-      }
-
-      if (account_id) {
-        account_id;
+        updatedFolder.foldername = foldername;
       }
 
       if (req.file) {
@@ -87,28 +85,21 @@ const folderController = {
             else console.log();
           }
         );
-
-        updatedFolder.set({
-          foldername,
-          account_id,
-          originalname: req.file.originalname,
-          mimetype: req.file.mimetype,
-          size: req.file.size,
-          path: req.file.location,
-        });
       }
 
-      updatedFolder.set({
-        foldername,
-        account_id,
-      });
+      if (req.file) {
+        updatedFolder.originalname = req.file.originalname;
+        updatedFolder.mimetype = req.file.mimetype;
+        updatedFolder.path = req.file.location;
+        updatedFolder.size = req.file.size;
+      }
 
       await updatedFolder.save();
 
       res.json({ updatedFolder, validation: "Le dossier a été modifié" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -130,7 +121,7 @@ const folderController = {
       res.json({ deletedFolder, validation: "Le dossier a bien été supprimé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -150,13 +141,13 @@ const folderController = {
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
   removePictoFromFolder: async (req, res) => {
     const { pictoId, folderId } = req.params;
-    console.log(req.body);
+
     try {
       let picto = await Picto.findByPk(pictoId);
 
@@ -164,10 +155,13 @@ const folderController = {
 
       await folder.removePicto(picto);
 
-      res.json({folder, validation: `Le picto a bien été retiré du favoris ${folder.foldername}`});
+      res.json({
+        folder,
+        validation: `Le picto a bien été retiré du favoris ${folder.foldername}`,
+      });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 };

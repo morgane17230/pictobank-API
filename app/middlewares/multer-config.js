@@ -16,10 +16,10 @@ const uploadImages = multer({
     bucket: process.env.AWSBucketIm,
     acl: "public-read",
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    metadata: (req, file, cb) => {
+    metadata: (_, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },
-    key: (req, file, cb) => {
+    key: (_, file, cb) => {
       cb(null, file.originalname);
     },
   }),
@@ -31,10 +31,10 @@ const uploadAvatar = multer({
     bucket: process.env.AWSBucketAv,
     acl: "public-read",
     contentType: multerS3.AUTO_CONTENT_TYPE,
-    metadata: (req, file, cb) => {
+    metadata: (_, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },
-    key: (req, file, cb) => {
+    key: (_, file, cb) => {
       cb(null, file.originalname);
     },
   }),

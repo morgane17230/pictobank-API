@@ -27,7 +27,7 @@ const pictoController = {
       const pictos = await Picto.findAll({
         where: {
           originalname: {
-            [Op.like]: req.params.query + "%",
+            [Op.like]: "%" + req.params.query + "%",
           },
         },
       });
@@ -51,7 +51,7 @@ const pictoController = {
       res.status(200).json({ newPictos, validation: "Picto(s) ajouté(s)" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -71,10 +71,10 @@ const pictoController = {
         }
       );
       await deletedPicto.destroy();
-      res.json({deletedPicto, validation: "Le picto a bien été supprimé"});
+      res.json({ deletedPicto, validation: "Le picto a bien été supprimé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -98,13 +98,13 @@ const pictoController = {
         );
         await deletedPicto.destroy();
       });
-        res.json({
-          deletedPictos,
-          validation: "Vos pictos ont bien été supprimés",
-        });
+      res.json({
+        deletedPictos,
+        validation: "Vos pictos ont bien été supprimés",
+      });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 };

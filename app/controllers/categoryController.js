@@ -28,40 +28,64 @@ const categoryController = {
 
   createCategory: async (req, res) => {
     try {
-      const [category, created] = await Category.findOrCreate({
-        where: { name: req.body.name.toLowerCase() },
+      const { name } = req.body;
+
+      let missingParams = [];
+
+      if (!name) {
+        missingParams.push("name");
+      }
+
+      if (missingParams.length > 0) {
+        return res
+          .status(400)
+          .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
+      }
+
+      const category = await Category.findOne({
+        where: { name: name.toLowerCase() },
       });
 
-      if (created) {
-        res.status(200).json({
-          created,
-          validation: `La nouvelle catégorie a bien été créée`,
-        });
-      } else if (category) {
+      if (category) {
         res
           .status(500)
-          .json({ error: "Une catégorie portant ce nom existe déjà" })
+          .json({ validation: "Une catégorie portant ce nom existe déjà" });
+      } else {
+        const newCategory = await Category.create({
+          name,
+          color: `#${Math.floor(Math.random()*16777215).toString(16)}`
+        });
+        res.status(200).json({
+          category: newCategory,
+          validation: `La nouvelle catégorie a bien été créée`,
+        });
       }
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
   updateCategory: async (req, res) => {
     try {
+
+      const { name } = req.body;
+
       const updatedCategory = await Category.findByPk(req.params.categoryId);
 
-      updatedCategory.set({
-        name: req.body.name,
-      });
+      if(name) {
+        updatedCategory.name = name
+      }
 
       await updatedCategory.save();
 
-      res.json({updatedCategory, validation: "La catégorie a bien été modifiée"});
+      res.json({
+        updatedCategory,
+        validation: "La catégorie a bien été modifiée",
+      });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 
@@ -69,10 +93,13 @@ const categoryController = {
     try {
       const deletedCategory = await Category.findByPk(req.params.categoryId);
       await deletedCategory.destroy();
-      res.json({deletedCategory, validation: "La catégorie a bien été supprimée"});
+      res.json({
+        deletedCategory,
+        validation: "La catégorie a bien été supprimée",
+      });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, {error: "Une erreur s'est produite"});
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 };

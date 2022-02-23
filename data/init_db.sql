@@ -47,6 +47,7 @@ CREATE TABLE "folder" (
 CREATE TABLE "category" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
+    "color" TEXT NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );
@@ -58,7 +59,7 @@ CREATE TABLE "picto" (
     "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
     "category_id" UUID NOT NULL REFERENCES "category"("id"),
-    "account_id" UUID NOT NULL REFERENCES "account"("id") ON DELETE CASCADE,
+    "account_id" UUID NOT NULL REFERENCES "account"("id"),
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );
