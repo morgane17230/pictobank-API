@@ -22,28 +22,12 @@ const pictoController = {
     }
   },
 
-  searchPictos: async (req, res, next) => {
-    try {
-      const pictos = await Picto.findAll({
-        where: {
-          originalname: {
-            [Op.like]: "%" + req.params.query + "%",
-          },
-        },
-      });
-      pictos ? res.json(pictos) : next();
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
-    }
-  },
-
   createPicto: async (req, res) => {
     try {
       const newPictos = await Picto.create({
         account_id: req.body.account_id,
         category_id: req.body.category_id,
-        originalname: req.file.originalname,
+        originalname: req.body.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
         path: req.file.location,

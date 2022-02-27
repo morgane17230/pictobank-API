@@ -4,26 +4,25 @@
     <meta charset="utf-8" />
     <title>Hello world!</title>
   </head>
-  <body>
-    <div class="container">
+  <body class="container">
       {{#each pictos}}
       <img src={{ this.path }} class="image">
       {{/each}}
-    </div>
   </body>
 </html>
 
 <style>
+
  .container {
     display: flex;
     flex-wrap: wrap;
-    justify-content: flex-start;
   }
 
   .image {
-    margin: 0;
-    width: 189px;
-    height: 189px;
+    margin-right: -2px;
+    padding: 0;
+    width: 140px;
+    height: 140px;
     border: 1px solid black;
   }
 </style>

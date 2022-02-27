@@ -3,13 +3,13 @@ BEGIN;
 INSERT INTO
   "category" ("name", "color")
 VALUES
-('manger', '#03fcb6'),
-('dormir','#7303fc'),
-('se promener', '#fc0398'),
-('se laver', '#fcbe03'),
-('jouer', '#3003fc'),
-('travailler', '#fc031c'),
-('autre', '#03fcc6');
+('manger', '{"background": "#03fcb6", "text": "black"}'),
+('dormir', '{"background": "#7303fc", "text": "white"}'),
+('se promener', '{"background": "#fc0398", "text": "black"}'),
+('se laver','{"background": "#fcbe03", "text": "black"}'),
+('jouer', '{"background": "#3003fc", "text": "white"}'),
+('travailler', '{"background": "#fc031c", "text": "white"}'),
+('autre', '{"background": "#03fcc6", "text": "black"}');
 
 INSERT INTO
   "account" ("id", "lastname", "firstname", "email", "name", "isOrganization")

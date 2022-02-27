@@ -11,7 +11,6 @@ const categoryController = require("./controllers/categoryController");
 // picto
 
 router.get("/picto", pictoController.getAllPictos);
-router.get("/picto/search/:query", pictoController.searchPictos);
 router.get("/picto/pdf", generatePDF);
 router.post("/picto", multerMid.uploadImages, pictoController.createPicto);
 router.delete("/picto/:pictoId", pictoController.deletePicto);

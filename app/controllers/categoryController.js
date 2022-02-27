@@ -1,4 +1,5 @@
 const { Category } = require("../models");
+const generateContrast = require('../helpers/colors')
 
 const categoryController = {
   getCategory: async (req, res) => {
@@ -29,7 +30,7 @@ const categoryController = {
   createCategory: async (req, res) => {
     try {
       const { name } = req.body;
-
+      const color = `#${Math.floor(Math.random()*16777215).toString(16)}`
       let missingParams = [];
 
       if (!name) {
@@ -53,7 +54,8 @@ const categoryController = {
       } else {
         const newCategory = await Category.create({
           name,
-          color: `#${Math.floor(Math.random()*16777215).toString(16)}`
+          color: {"background": color, "text": generateContrast.contrast(color)}
+
         });
         res.status(200).json({
           category: newCategory,

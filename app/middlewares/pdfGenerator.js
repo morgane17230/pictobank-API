@@ -29,10 +29,10 @@ generatePDF = async (req, res) => {
       format: "A4",
       orientation: "portrait",
       footer: {
-        height: "10mm",
-        contents: {
-          default: `<span style="color: #444;>{{page}}</span>/<span>{{pages}}</span>`,
-        },
+        height: "20mm",
+            contents: {
+                default: '<span style="color: #444; font-size: 10px">{{page}}</span><span style="font-size: 10px">/{{pages}}</span>',
+            }
       },
     };
 

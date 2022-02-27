@@ -47,7 +47,7 @@ CREATE TABLE "folder" (
 CREATE TABLE "category" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     "name" TEXT NOT NULL,
-    "color" TEXT NOT NULL,
+    "color" JSONB NOT NULL,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );

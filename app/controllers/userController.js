@@ -164,9 +164,9 @@ const UserController = {
       const { lastname, firstname, email, name, password, teamPassword } =
         req.body;
 
-      const userId = req.params.userId;
+      console.log(req.params.userId);
 
-      const user = await User.findByPk(userId, {
+      const user = await User.findByPk( req.params.userId, {
         where: {
           role: "admin",
         },
