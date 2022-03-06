@@ -30,9 +30,10 @@ generatePDF = async (req, res) => {
       orientation: "portrait",
       footer: {
         height: "20mm",
-            contents: {
-                default: '<span style="color: #444; font-size: 10px">{{page}}</span><span style="font-size: 10px">/{{pages}}</span>',
-            }
+        contents: {
+          default:
+            '<span style="color: #444; font-size: 10px">{{page}}</span><span style="font-size: 10px">/{{pages}}</span>',
+        },
       },
     };
 
@@ -54,7 +55,7 @@ generatePDF = async (req, res) => {
         res.send(file);
       })
       .catch((error) => {
-        console.error(error);
+        res.status(500).json({ validation: "impossible de créer un PDF" });
       });
   } catch (error) {
     console.trace(error);

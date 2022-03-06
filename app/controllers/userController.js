@@ -1,6 +1,6 @@
 const { User, Account, Picto } = require("../models");
-const passwordMiddleware = require("../middlewares/password");
-const sendMail = require("../middlewares/nodemailer");
+const passwordGenerator = require("../helpers/password");
+const sendMail = require("../services/nodemailer");
 const { jsonwebtoken } = require("../middlewares/jwt");
 const jwt_decode = require("jwt-decode");
 
@@ -110,15 +110,15 @@ const UserController = {
       if (created) {
         if (isOrganization) {
           await User.create({
-            username: `${account.name}-ADMIN`,
+            username: `${account.name.toLowerCase()}-admin`,
             password,
             account_id: account.id,
             role: "admin",
           });
 
           await User.create({
-            username: `${account.name}-TEAM`,
-            password: passwordMiddleware(),
+            username: `${account.name.toLowerCase()}-team`,
+            password: passwordGenerator(),
             account_id: account.id,
             role: "user",
           });
@@ -138,7 +138,7 @@ const UserController = {
             firstname: firstname.toLowerCase(),
             email,
             isOrganization,
-            name: name.toUpperCase(),
+            name: name.toLowerCase(),
           },
         });
 
@@ -163,8 +163,6 @@ const UserController = {
       }
       const { lastname, firstname, email, name, password, teamPassword } =
         req.body;
-
-      console.log(req.params.userId);
 
       const user = await User.findByPk( req.params.userId, {
         where: {
@@ -215,8 +213,8 @@ const UserController = {
       if (name) {
         if (account.isOrganization) {
           account.name = name.toUpperCase();
-          team.username = `${account.name}-TEAM`;
-          user.username = `${account.name}-ADMIN`;
+          team.username = `${account.name.toLowerCase()}-team`;
+          user.username = `${account.name.toLowerCase()}-team`;
         } else {
           account.name = name.toUpperCase();
           user.username = account.name;
@@ -283,10 +281,20 @@ const UserController = {
 
       if (account) {
         await account.destroy();
-        res.json({ validation: "Votre compte a été supprimé" });
+        sendMail({
+        body: {
+          type: "confirmDelete",
+          lastname: account.lastname,
+          firstname: account.firstname,
+          email: account.email
+        },
+      });
       } else {
         res.status(404).json("Account does not exist");
       }
+
+
+      res.json({ validation: "Votre compte a été supprimé, une confirmation vous a été envoyée" });
     } catch (error) {
       console.trace(error);
       res.status(500).json(error, { error: "Une erreur s'est produite" });

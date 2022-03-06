@@ -1,4 +1,4 @@
-const passwordMiddleware = () => {
+const passwordGenerator = () => {
   const l = 8;
   const c = "abcdefghijknopqrstuvwxyzACDEFGHJKLMNPQRSTUVWXYZ12345679";
   const n = c.length;
@@ -19,4 +19,4 @@ const passwordMiddleware = () => {
   return r;
 };
 
-module.exports = passwordMiddleware;
+module.exports = passwordGenerator;

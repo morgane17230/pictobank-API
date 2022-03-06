@@ -1,5 +1,4 @@
 const { Picto } = require("../models");
-const { Op } = require("sequelize");
 const aws = require("aws-sdk");
 
 aws.config.update({

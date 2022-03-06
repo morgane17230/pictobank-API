@@ -15,7 +15,7 @@ INSERT INTO
   "account" ("id", "lastname", "firstname", "email", "name", "isOrganization")
 VALUES
 ('ee47f3a0-941c-11ec-b909-0242ac120002', 'Gambis', 'Morgane', 'aboumorgane@live.fr', 'pikto', false),
-('41255716-941d-11ec-b909-0242ac120002', 'Gambis', 'Vincent', 'bbamoi6@live.fr', 'IME', true);
+('41255716-941d-11ec-b909-0242ac120002', 'Gambis', 'Vincent', 'mgambis@outlook.fr', 'IME', true);
 
 INSERT INTO
   "user" ("username", "password", "role", "account_id")

@@ -1,7 +1,7 @@
 const express = require("express");
 const router = express.Router();
-const sendMail = require("./middlewares/nodemailer");
-const generatePDF = require("./middlewares/pdfGenerator");
+const sendMail = require("./services/nodemailer");
+const generatePDF = require("./services/pdfGenerator");
 const multerMid = require("./middlewares/multer-config.js");
 const pictoController = require("./controllers/pictoController.js");
 const userController = require("./controllers/userController");
@@ -52,10 +52,7 @@ router.delete("/account/:accountId", userController.deleteUser);
 // category
 
 router.get("/category", categoryController.getAllCategories);
-router.get("/category/:categoryId", categoryController.getCategory);
 router.post("/category", categoryController.createCategory);
-router.put("/category/:categoryId", categoryController.updateCategory);
-router.delete("/category/categoryId", categoryController.deleteCategory);
 
 // nodemailer
 

@@ -2,18 +2,6 @@ const { Category } = require("../models");
 const generateContrast = require('../helpers/colors')
 
 const categoryController = {
-  getCategory: async (req, res) => {
-    try {
-      const category = await Category.findByPk(req.params.categoryId, {
-        include: ["pictos"],
-      });
-      res.json(category);
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error.toString());
-    }
-  },
-
   getAllCategories: async (_, res) => {
     try {
       const categories = await Category.findAll({
@@ -66,44 +54,7 @@ const categoryController = {
       console.trace(error);
       res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
-  },
-
-  updateCategory: async (req, res) => {
-    try {
-
-      const { name } = req.body;
-
-      const updatedCategory = await Category.findByPk(req.params.categoryId);
-
-      if(name) {
-        updatedCategory.name = name
-      }
-
-      await updatedCategory.save();
-
-      res.json({
-        updatedCategory,
-        validation: "La catégorie a bien été modifiée",
-      });
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
-    }
-  },
-
-  deleteCategory: async (req, res) => {
-    try {
-      const deletedCategory = await Category.findByPk(req.params.categoryId);
-      await deletedCategory.destroy();
-      res.json({
-        deletedCategory,
-        validation: "La catégorie a bien été supprimée",
-      });
-    } catch (error) {
-      console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
-    }
-  },
+  }
 };
 
 module.exports = categoryController;
