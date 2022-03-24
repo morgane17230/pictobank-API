@@ -15,13 +15,13 @@ INSERT INTO
   "account" ("id", "lastname", "firstname", "email", "name", "isOrganization")
 VALUES
 ('ee47f3a0-941c-11ec-b909-0242ac120002', 'Gambis', 'Morgane', 'aboumorgane@live.fr', 'pikto', false),
-('41255716-941d-11ec-b909-0242ac120002', 'Gambis', 'Vincent', 'mgambis@outlook.fr', 'IME', true);
+('41255716-941d-11ec-b909-0242ac120002', 'Gambis', 'Vincent', 'mgambis@outlook.fr', 'ime', true);
 
 INSERT INTO
   "user" ("username", "password", "role", "account_id")
 VALUES
-('PIKTO', '$2a$10$oTHyg7kTinoGw6P6rfMQiOE7sbdBGtSelJ5zTCGOvmGayrR7eyEbG', 'isOwner', 'ee47f3a0-941c-11ec-b909-0242ac120002'),
-('IME-ADMIN', '$2a$10$oTHyg7kTinoGw6P6rfMQiOE7sbdBGtSelJ5zTCGOvmGayrR7eyEbG', 'admin', '41255716-941d-11ec-b909-0242ac120002'),
-('IME-USER', '$2a$10$oTHyg7kTinoGw6P6rfMQiOE7sbdBGtSelJ5zTCGOvmGayrR7eyEbG', 'user', '41255716-941d-11ec-b909-0242ac120002');
+('pikto', '$2a$10$oTHyg7kTinoGw6P6rfMQiOE7sbdBGtSelJ5zTCGOvmGayrR7eyEbG', 'isOwner', 'ee47f3a0-941c-11ec-b909-0242ac120002'),
+('ime-admin', '$2a$10$oTHyg7kTinoGw6P6rfMQiOE7sbdBGtSelJ5zTCGOvmGayrR7eyEbG', 'admin', '41255716-941d-11ec-b909-0242ac120002'),
+('ime-team', '$2a$10$oTHyg7kTinoGw6P6rfMQiOE7sbdBGtSelJ5zTCGOvmGayrR7eyEbG', 'user', '41255716-941d-11ec-b909-0242ac120002');
 
 COMMIT;

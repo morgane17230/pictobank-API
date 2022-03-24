@@ -1,4 +1,4 @@
-const { Folder, Picto } = require("../models");
+const { Folder, Picto, Account } = require("../models");
 const aws = require("aws-sdk");
 
 const folderController = {
@@ -14,12 +14,18 @@ const folderController = {
     }
   },
 
-  getFoldersByOrg: async (req, res) => {
+  getFoldersByAccount: async (req, res) => {
     try {
+      console.log(req.params.accountId);
       const folders = await Folder.findAll({
-        where: {
-          account_id: req.params.orgId,
-        },
+        include: [
+          {
+            association: "accounts",
+            where: {
+              id: req.params.accountId,
+            },
+          },
+        ],
       });
       res.json(folders);
     } catch (error) {
@@ -47,12 +53,15 @@ const folderController = {
       }
       const newFolder = await Folder.create({
         foldername: req.body.foldername,
-        account_id: req.body.account_id,
         originalname: req.file.originalname,
         mimetype: req.file.mimetype,
         size: req.file.size,
         path: req.file.location,
       });
+
+      const account = await Account.findByPk(req.body.account_id);
+
+      await account.addFolder(newFolder);
 
       res.json({ newFolder, validation: "Le dossier a bien été créé" });
     } catch (error) {
@@ -158,6 +167,46 @@ const folderController = {
       res.json({
         folder,
         validation: `Le picto a bien été retiré du favoris ${folder.foldername}`,
+      });
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
+    }
+  },
+
+  addFolderToAccount: async (req, res) => {
+    const { accountId, folderId } = req.params;
+
+    try {
+      let account = await Account.findByPk(accountId);
+
+      let folder = await Folder.findByPk(folderId);
+
+      await account.addPicto(folder);
+
+      res.json({
+        account,
+        validation: `Le dossier ${folder.foldername} a bien été ajouté au compte ${account.username}`,
+      });
+    } catch (error) {
+      console.trace(error);
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
+    }
+  },
+
+  removeFolderFromAccount: async (req, res) => {
+    const { accountId, folderId } = req.params;
+
+    try {
+      let account = await Account.findByPk(accountId);
+
+      let folder = await Folder.findByPk(folderId);
+
+      await account.removePicto(folder);
+
+      res.json({
+        account,
+        validation: `Le dossier ${folder.foldername} a bien été supprimé du compte ${account.username}`,
       });
     } catch (error) {
       console.trace(error);

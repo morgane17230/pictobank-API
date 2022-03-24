@@ -3,8 +3,7 @@ BEGIN;
 SELECT
     gen_random_uuid();
 
-DROP TABLE IF EXISTS
-"account",
+DROP TABLE IF EXISTS "account",
 "user",
 "folder",
 "picto",
@@ -39,7 +38,6 @@ CREATE TABLE "folder" (
     "mimetype" TEXT NOT NULL,
     "size" INTEGER NOT NULL,
     "path" TEXT NOT NULL,
-    "account_id" UUID NOT NULL REFERENCES "account"("id") ON DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
 );
@@ -68,6 +66,15 @@ CREATE TABLE "folder_has_picto" (
     "folder_id" UUID NOT NULL REFERENCES "folder"("id") ON
 DELETE CASCADE,
     "picto_id" UUID NOT NULL REFERENCES "picto"("id") ON
+DELETE CASCADE,
+    "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    "updated_at" TIMESTAMPTZ
+);
+
+CREATE TABLE "account_has_folder" (
+    "folder_id" UUID NOT NULL REFERENCES "folder"("id") ON
+DELETE CASCADE,
+    "account_id" UUID NOT NULL REFERENCES "account"("id") ON
 DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ

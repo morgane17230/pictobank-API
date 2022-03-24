@@ -66,7 +66,7 @@ const pictoController = {
 
     try {
       const deletedPictos = await Picto.findAll({
-        where: { account_id: req.params.orgId },
+        where: { account_id: req.params.accountId },
       });
       deletedPictos.forEach(async (deletedPicto) => {
         s3.deleteObject(

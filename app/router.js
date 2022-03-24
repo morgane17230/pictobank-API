@@ -14,12 +14,12 @@ router.get("/picto", pictoController.getAllPictos);
 router.get("/picto/pdf", generatePDF);
 router.post("/picto", multerMid.uploadImages, pictoController.createPicto);
 router.delete("/picto/:pictoId", pictoController.deletePicto);
-router.delete("/pictos/:orgId", pictoController.deletePictos);
+router.delete("/pictos/:AccountId", pictoController.deletePictos);
 
 // folder
 
 router.get("/folder/:folderId", folderController.getFolder);
-router.get("/org/:orgId/folders", folderController.getFoldersByOrg);
+router.get("/account/:accountId/folders", folderController.getFoldersByAccount);
 router.post(
   "/addFolder",
   multerMid.uploadAvatar,
@@ -35,9 +35,18 @@ router.post(
   "/folder/:folderId/picto/:pictoId",
   folderController.addPictoToFolder
 );
+router.post(
+  "/folder/:folderId/account/:accountId",
+  folderController.addFolderToAccount
+);
 router.delete(
   "/folder/:folderId/picto/:pictoId",
   folderController.removePictoFromFolder
+);
+
+router.delete(
+  "/folder/:folderId/account/:accountId",
+  folderController.removeFolderFromAccount
 );
 
 // user

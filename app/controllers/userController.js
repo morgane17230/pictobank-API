@@ -164,7 +164,7 @@ const UserController = {
       const { lastname, firstname, email, name, password, teamPassword } =
         req.body;
 
-      const user = await User.findByPk( req.params.userId, {
+      const user = await User.findByPk(req.params.userId, {
         where: {
           role: "admin",
         },
@@ -282,19 +282,21 @@ const UserController = {
       if (account) {
         await account.destroy();
         sendMail({
-        body: {
-          type: "confirmDelete",
-          lastname: account.lastname,
-          firstname: account.firstname,
-          email: account.email
-        },
-      });
+          body: {
+            type: "confirmDelete",
+            lastname: account.lastname,
+            firstname: account.firstname,
+            email: account.email,
+          },
+        });
       } else {
         res.status(404).json("Account does not exist");
       }
 
-
-      res.json({ validation: "Votre compte a été supprimé, une confirmation vous a été envoyée" });
+      res.json({
+        validation:
+          "Votre compte a été supprimé, une confirmation vous a été envoyée",
+      });
     } catch (error) {
       console.trace(error);
       res.status(500).json(error, { error: "Une erreur s'est produite" });
@@ -349,13 +351,14 @@ const UserController = {
             process.env.jwtSecret,
             jwtOptions
           ),
+          validation: "Authentifiation réussie",
         });
       } else {
         res.json({ validation: "Un des identifiants est invalide" });
       }
     } catch (error) {
       console.trace(error);
-      res.status(500).json({ error: "Une erreur s'est produite" });
+      res.status(500).json(error, { error: "Une erreur s'est produite" });
     }
   },
 };
