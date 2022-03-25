@@ -87,7 +87,7 @@ const folderController = {
         s3.deleteObject(
           {
             Bucket: process.env.AWSBucketAv,
-            Key: updatedFolder.name,
+            Key: updatedFolder.originalname,
           },
           function (err, _) {
             if (err) console.log(err, err.stack);
@@ -119,7 +119,7 @@ const folderController = {
       s3.deleteObject(
         {
           Bucket: process.env.AWSBucketAv,
-          Key: deletedFolder.name,
+          Key: deletedFolder.originalname,
         },
         function (err, _) {
           if (err) console.log(err, err.stack);
