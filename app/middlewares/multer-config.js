@@ -1,6 +1,6 @@
 const aws = require("aws-sdk");
 const multer = require("multer");
-const multerS3 = require("multer-s3");
+const multerS3 = require("multer-s3-transform");
 
 aws.config.update({
   apiVersion: "2006-03-01",
@@ -35,7 +35,7 @@ const uploadAvatar = multer({
       cb(null, { fieldName: file.fieldname });
     },
     key: (_, file, cb) => {
-      cb(null, file.originalname);
+      cb(null, `${file.originalname.split('.')[0]}.webp`);
     },
   }),
 }).single("path");

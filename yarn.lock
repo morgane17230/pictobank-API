@@ -1543,10 +1543,10 @@ ms@^2.1.1:
   resolved "https://registry.yarnpkg.com/ms/-/ms-2.1.3.tgz#574c8138ce1d2b5861f0b44579dbadd60c6615b2"
   integrity sha512-6FlzubTLZG3J2a/NVCAleEhjzq5oxgHyaCU9yYXvcLsvoVaHJq/s5xXI6/XXP6tz7R9xAOtHnSO/tXtF3WRTlA==
 
-multer-s3@^2.9.0:
-  version "2.9.0"
-  resolved "https://registry.yarnpkg.com/multer-s3/-/multer-s3-2.9.0.tgz#a946fd8c01c9726076f11949b84943259f8ca8c3"
-  integrity sha512-qLF8pCD5HhXLLd954q49B63x3bk6Fe0jqD3eM0FVcGtqhiSVuTrchEDAo0mnO5pc34cMuX/CVCCbPkGTjX2xUA==
+multer-s3-transform@^2.10.3:
+  version "2.10.3"
+  resolved "https://registry.yarnpkg.com/multer-s3-transform/-/multer-s3-transform-2.10.3.tgz#f915462edfe87138b3e54e6793d1fe1030f58eea"
+  integrity sha512-Mm31JEFDL+7q7x7JN9HHFVohykUNLAinbImsHPYZL9+tXq8YoW1HyIJpaua/TVQqJ45I6So2S4M1lhdtrdq33w==
   dependencies:
     file-type "^3.3.0"
     is-svg "^2.1.0"

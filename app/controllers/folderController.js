@@ -16,7 +16,6 @@ const folderController = {
 
   getFoldersByAccount: async (req, res) => {
     try {
-      console.log(req.params.accountId);
       const folders = await Folder.findAll({
         include: [
           {
@@ -51,6 +50,7 @@ const folderController = {
           .status(400)
           .json(`Missing body parameter(s): ${missingParams.join(", ")}`);
       }
+
       const newFolder = await Folder.create({
         foldername: req.body.foldername,
         originalname: req.file.originalname,
@@ -77,6 +77,8 @@ const folderController = {
         include: ["pictos"],
       });
 
+      console.log(`${updatedFolder.originalname.split('.')[0]}.webp`)
+
       const { foldername } = req.body;
 
       if (foldername) {
@@ -87,7 +89,7 @@ const folderController = {
         s3.deleteObject(
           {
             Bucket: process.env.AWSBucketAv,
-            Key: updatedFolder.originalname,
+            Key: `${updatedFolder.originalname.split('.')[0]}.webp`,
           },
           function (err, _) {
             if (err) console.log(err, err.stack);
@@ -116,10 +118,11 @@ const folderController = {
     const s3 = new aws.S3();
     try {
       const deletedFolder = await Folder.findByPk(req.params.folderId);
+      console.log(`${deletedFolder.originalname.split('.')[0]}.webp`)
       s3.deleteObject(
         {
           Bucket: process.env.AWSBucketAv,
-          Key: deletedFolder.originalname,
+          Key: `${deletedFolder.originalname.split('.')[0]}.webp`,
         },
         function (err, _) {
           if (err) console.log(err, err.stack);
