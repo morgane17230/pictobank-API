@@ -52,7 +52,9 @@ const categoryController = {
       }
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "La catégorie n'a pas pu être créée",
+      });
     }
   }
 };
