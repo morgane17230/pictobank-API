@@ -77,8 +77,6 @@ const folderController = {
         include: ["pictos"],
       });
 
-      console.log(`${updatedFolder.originalname.split('.')[0]}.webp`)
-
       const { foldername } = req.body;
 
       if (foldername) {
@@ -118,7 +116,7 @@ const folderController = {
     const s3 = new aws.S3();
     try {
       const deletedFolder = await Folder.findByPk(req.params.folderId);
-      console.log(`${deletedFolder.originalname.split('.')[0]}.webp`)
+
       s3.deleteObject(
         {
           Bucket: process.env.AWSBucketAv,

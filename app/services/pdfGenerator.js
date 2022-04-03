@@ -33,7 +33,7 @@ generatePDF = async (req, res) => {
         const converted = await sharp(data.Body).png().toBuffer();
         const base64 = converted.toString("base64");
         const url = `data:image/png;base64,${base64}`;
-        console.log(url);
+        
         return url;
       } catch (e) {
         throw new Error(`Could not retrieve file from S3: ${e.message}`);
