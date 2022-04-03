@@ -3,12 +3,14 @@ BEGIN;
 SELECT
     gen_random_uuid();
 
-DROP TABLE IF EXISTS "account",
+DROP TABLE IF EXISTS
+"account",
 "user",
 "folder",
 "picto",
 "category",
-"folder_has_picto";
+"folder_has_picto",
+"account_has_folder";
 
 CREATE TABLE "account" (
     "id" UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -72,9 +74,9 @@ DELETE CASCADE,
 );
 
 CREATE TABLE "account_has_folder" (
-    "folder_id" UUID NOT NULL REFERENCES "folder"("id") ON
-DELETE CASCADE,
     "account_id" UUID NOT NULL REFERENCES "account"("id") ON
+DELETE CASCADE,
+    "folder_id" UUID NOT NULL REFERENCES "folder"("id") ON
 DELETE CASCADE,
     "created_at" TIMESTAMPTZ NOT NULL DEFAULT NOW(),
     "updated_at" TIMESTAMPTZ
