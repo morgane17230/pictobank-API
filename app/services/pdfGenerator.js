@@ -2,12 +2,12 @@ const pdf = require("pdf-creator-node");
 const { Picto } = require("../models");
 var fs = require("fs");
 const path = require("path");
-
-let pictos = [];
+const sharp = require("sharp");
+const aws = require("aws-sdk");
 
 generatePDF = async (req, res) => {
   try {
-    pictos = await Picto.findAll({
+    const pictos = await Picto.findAll({
       where: { id: req.query.collectedPictos },
       attributes: [
         `id`,
@@ -21,10 +21,34 @@ generatePDF = async (req, res) => {
       raw: true,
     });
 
+    async function getObject(picto) {
+      const s3 = new aws.S3();
+      try {
+        const params = {
+          Bucket: process.env.AWSBucketIm,
+          Key: picto.originalname,
+        };
+
+        const data = await s3.getObject(params).promise();
+        const converted = await sharp(data.Body).png().toBuffer();
+        const base64 = converted.toString("base64");
+        const url = `data:image/png;base64,${base64}`;
+        console.log(url);
+        return url;
+      } catch (e) {
+        throw new Error(`Could not retrieve file from S3: ${e.message}`);
+      }
+    }
+
+    const convertedPictos = await Promise.all(
+      pictos.map(async (picto) => await getObject(picto))
+    );
+
     var html = fs.readFileSync(
       path.resolve(__dirname, "../views/template.html"),
       "utf8"
     );
+
     var options = {
       format: "A4",
       orientation: "portrait",
@@ -40,7 +64,7 @@ generatePDF = async (req, res) => {
     var document = {
       html: html,
       data: {
-        pictos: pictos,
+        pictos: convertedPictos,
       },
       type: "buffer",
     };
