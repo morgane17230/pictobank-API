@@ -67,24 +67,26 @@ const sendMail = async (req, res) => {
       },
     };
   } else if (type === "resetPassword" && email) {
-    let user = null;
+    let user;
     try {
+
       const account = await Account.findOne({
         where: {
           email: email,
         },
       });
+
       user = await User.findOne({
         where: {
           account_id: account.id,
           role: "admin",
         },
       });
+
     } catch (error) {
       console.trace(error);
       res.status(500).json(error.toString());
     }
-
     options = {
       from: process.env.smtpUser,
       to: email,
@@ -94,6 +96,7 @@ const sendMail = async (req, res) => {
         user_id: user.id,
       },
     };
+
   } else if (
     type === "confirmResetPassword" &&
     lastname &&
@@ -127,7 +130,7 @@ const sendMail = async (req, res) => {
     if (error) {
       res.status(409).json({ error: "Le message n'a pas pu être envoyé" });
     } else {
-      return res.json({ validation: "Le message a bien été envoyé" });
+      res.status(200).json({ validation: "Le message a bien été envoyé" });
     }
   });
 };
