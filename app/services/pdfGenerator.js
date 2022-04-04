@@ -79,7 +79,7 @@ generatePDF = async (req, res) => {
         res.send(file);
       })
       .catch((error) => {
-        return res.status(500).json({ validation: "impossible de créer un PDF" });
+        return res.status(500).json({ message: "impossible de créer un PDF" });
       });
   } catch (error) {
     console.trace(error);

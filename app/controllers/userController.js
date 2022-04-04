@@ -144,15 +144,17 @@ const UserController = {
 
         res.json({
           created,
-          validation:
+          message:
             "Votre compte a bien été créé et un message de confirmation vous a été envoyé",
         });
       } else if (account) {
-        res.json({ validation: "Un utilisateur avec ce nom existe déjà" });
+        res.json({ message: "Un utilisateur avec ce nom existe déjà" });
       }
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -199,7 +201,7 @@ const UserController = {
       });
 
       if (!account) {
-        return res.status(404).json("User not found");
+        return res.status(404).json("Account not found");
       }
 
       if (lastname) {
@@ -248,11 +250,13 @@ const UserController = {
 
       res.json({
         user,
-        validation: "Vos informations ont été mises à jour",
+        message: "Vos informations ont été mises à jour",
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -294,12 +298,14 @@ const UserController = {
       }
 
       res.json({
-        validation:
+        message:
           "Votre compte a été supprimé, une confirmation vous a été envoyée",
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -336,7 +342,7 @@ const UserController = {
         const passwordMatches = user.validPassword(password);
 
         if (!passwordMatches) {
-          res.json({ validation: "Un des identifiants est invalide" });
+          res.json({ message: "Un des identifiants est invalide" });
         }
         const jwtContent = { userId: user.id };
         const jwtOptions = {
@@ -351,14 +357,16 @@ const UserController = {
             process.env.jwtSecret,
             jwtOptions
           ),
-          validation: "Authentifiation réussie",
+          message: "Authentifiation réussie",
         });
       } else {
-        res.json({ validation: "Un des identifiants est invalide" });
+        res.json({ message: "Un des identifiants est invalide" });
       }
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 };

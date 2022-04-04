@@ -10,7 +10,9 @@ const folderController = {
       res.json(folder);
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error.toString());
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -29,7 +31,9 @@ const folderController = {
       res.json(folders);
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error.toString());
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -63,10 +67,12 @@ const folderController = {
 
       await account.addFolder(newFolder);
 
-      res.json({ newFolder, validation: "Le dossier a bien été créé" });
+      res.json({ newFolder, message: "Le dossier a bien été créé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -105,10 +111,12 @@ const folderController = {
 
       await updatedFolder.save();
 
-      res.json({ updatedFolder, validation: "Le dossier a été modifié" });
+      res.json({ updatedFolder, message: "Le dossier a été modifié" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -128,10 +136,12 @@ const folderController = {
         }
       );
       await deletedFolder.destroy();
-      res.json({ deletedFolder, validation: "Le dossier a bien été supprimé" });
+      res.json({ deletedFolder, message: "Le dossier a bien été supprimé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -147,11 +157,13 @@ const folderController = {
 
       res.json({
         folder,
-        validation: `Le picto a bien été ajouté au favoris ${folder.foldername}`,
+        message: `Le picto a bien été ajouté au favoris ${folder.foldername}`,
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -167,11 +179,13 @@ const folderController = {
 
       res.json({
         folder,
-        validation: `Le picto a bien été retiré du favoris ${folder.foldername}`,
+        message: `Le picto a bien été retiré du favoris ${folder.foldername}`,
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -187,11 +201,13 @@ const folderController = {
 
       res.json({
         account,
-        validation: `Le dossier ${folder.foldername} a bien été ajouté au compte ${account.username}`,
+        message: `Le dossier ${folder.foldername} a bien été ajouté au compte ${account.username}`,
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -207,11 +223,13 @@ const folderController = {
 
       res.json({
         account,
-        validation: `Le dossier ${folder.foldername} a bien été supprimé du compte ${account.username}`,
+        message: `Le dossier ${folder.foldername} a bien été supprimé du compte ${account.username}`,
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 };

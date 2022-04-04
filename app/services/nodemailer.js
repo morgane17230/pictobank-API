@@ -130,7 +130,7 @@ const sendMail = async (req, res) => {
         message: "Le message n'a pas pu être envoyé",
       });
     } else {
-      return res.status(200).json({ validation: "Le message a bien été envoyé" });
+      return res.status(200).json({ message: "Le message a bien été envoyé" });
     }
   });
 };

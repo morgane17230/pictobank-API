@@ -17,7 +17,9 @@ const pictoController = {
       pictos ? res.json(pictos) : next();
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error.toString());
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -31,10 +33,12 @@ const pictoController = {
         size: req.file.size,
         path: req.file.location,
       });
-      res.status(200).json({ newPictos, validation: "Picto(s) ajouté(s)" });
+      res.status(200).json({ newPictos, message: "Picto(s) ajouté(s)" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -54,10 +58,12 @@ const pictoController = {
         }
       );
       await deletedPicto.destroy();
-      res.json({ deletedPicto, validation: "Le picto a bien été supprimé" });
+      res.json({ deletedPicto, message: "Le picto a bien été supprimé" });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -83,11 +89,13 @@ const pictoController = {
       });
       res.json({
         deletedPictos,
-        validation: "Vos pictos ont bien été supprimés",
+        message: "Vos pictos ont bien été supprimés",
       });
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error, { error: "Une erreur s'est produite" });
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 };

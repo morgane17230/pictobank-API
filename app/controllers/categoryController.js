@@ -11,7 +11,9 @@ const categoryController = {
       res.json(categories);
     } catch (error) {
       console.trace(error);
-      res.status(500).json(error.toString());
+      return res.status(500).json({
+        message: "Une erreur est survenue",
+      });
     }
   },
 
@@ -38,8 +40,9 @@ const categoryController = {
       if (category) {
         res
           .status(500)
-          .json({ validation: "Une catégorie portant ce nom existe déjà" });
+          .json({ message: "Une catégorie portant ce nom existe déjà" });
       } else {
+
         const newCategory = await Category.create({
           name,
           color: {"background": color, "text": generateContrast.contrast(color)}
@@ -47,7 +50,7 @@ const categoryController = {
         });
         res.status(200).json({
           category: newCategory,
-          validation: `La nouvelle catégorie a bien été créée`,
+          message: `La nouvelle catégorie a bien été créée`,
         });
       }
     } catch (error) {
