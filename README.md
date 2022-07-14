@@ -1,1 +1,1 @@
-# pictobank-API
+# Pikto-API
